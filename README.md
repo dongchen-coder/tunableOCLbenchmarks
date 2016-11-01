@@ -4,10 +4,14 @@ This is a tunable extension for PolyBench/ACC OpenCL benchmarks. The exetension 
 Benchmarks that have been modified to tunalble version:
 
 linear-algebra/kernels/
+
 	3mm
+
 	gemm
 
 stencils/
+
 	convolution-2d
+
 	convolution-3d
 

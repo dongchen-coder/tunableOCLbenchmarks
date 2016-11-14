@@ -13,6 +13,8 @@ linear-algebra/kernels/
 	gemm
 
 	atax
+	
+	bicg
 
 stencils/
 

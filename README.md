@@ -12,6 +12,8 @@ linear-algebra/kernels/
 
 	gemm
 
+	atax
+
 stencils/
 
 	convolution-2d

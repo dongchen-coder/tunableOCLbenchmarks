@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-
+#include "../utilities/aeol.h"
 
 void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, int nj, int nk, int cX, int cY, int widx, int widy, int lidx, int lidy) {
 
@@ -23,11 +23,17 @@ void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, in
             				{
 								//printf("%d %d\n", j, i);
                 				C[i * nj + j] *= beta;
+
+								access(i * nj + j + ni*nk + nk*nj, wy*widx+wx);								
+
                 				int k;
                 				for(k=0; k < nk; k++)
                 				{
                     				C[i * nj + j] += alpha * A[i * nk + k] * B[k * nj +j];
-                				}
+                					access(i * nk + k, wy*widx+wx);
+									access(k * nj +j + ni * nk, wy*widx+wx);
+									access(i * nj + j + ni*nk + nk*nj, wy*widx+wx);
+								}
             				}
         				}
     				}
@@ -142,6 +148,9 @@ int main() {
 			if (verify(C, C_ref, ni, nj) == false) {
 				printf("Result does not MATCH\n");
 			}
+			
+			calculateRTDistribution();
+			
 		}
 	}
 	

@@ -16,6 +16,8 @@ linear-algebra/kernels/
 	
 	bicg
 
+	gemver
+
 stencils/
 
 	convolution-2d

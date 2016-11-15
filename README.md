@@ -18,6 +18,8 @@ linear-algebra/kernels/
 
 	gemver
 
+	gesummv
+
 stencils/
 
 	convolution-2d

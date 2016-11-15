@@ -63,6 +63,37 @@ void access(uint64_t addr, uint64_t wgid) {
 	return;
 }
 
+void calculateRTDistribution() {
+	uint64_t intraC = 0;
+	uint64_t interC = 0;
+	double intraD = 0;
+	double interD = 0;
+	for (int i = 0; i < N; i++) {
+		for (std::map<uint64_t, uint64_t>::iterator it = rt[i].begin(), eit = rt[i].end(); it != eit; ++it) {
+			intraC += it->second;
+		}
+	}
+	
+	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
+		int tmp = 0;
+		for (int i = 0; i < N; i++) {
+			if (f[i].find(*it) != f[i].end()) {
+				tmp++;
+			}
+		}
+		interC += tmp - 1;
+	}	
+
+	intraD = (double) intraC / (intraC + interC);
+	interD = (double) interC / (intraC + interC);
+
+	printf("Intra vs Inter reuse count %llu, %llu\n", intraC, interC);
+	printf("              distribution %f, %f\n", intraD, interD);
+
+	return;
+}
+
+
 void reset() {
 	f.clear();
 	e.clear();

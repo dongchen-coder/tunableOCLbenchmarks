@@ -1,0 +1,108 @@
+32 32 --------
+Intra vs Inter reuse count 11576972054, 0
+              distribution 1.000000, 0.000000
+32 64 --------
+Intra vs Inter reuse count 8651672108, 2048
+              distribution 1.000000, 0.000000
+32 128 --------
+Intra vs Inter reuse count 7196440664, 6144
+              distribution 0.999999, 0.000001
+32 256 --------
+Intra vs Inter reuse count 6483662000, 14336
+              distribution 0.999998, 0.000002
+32 512 --------
+Intra vs Inter reuse count 6156946784, 30720
+              distribution 0.999995, 0.000005
+32 1024 --------
+Intra vs Inter reuse count 6052889792, 63488
+              distribution 0.999990, 0.000010
+64 32 --------
+Intra vs Inter reuse count 8105207340, 2048
+              distribution 1.000000, 0.000000
+64 64 --------
+Intra vs Inter reuse count 5369959512, 4096
+              distribution 0.999999, 0.000001
+64 128 --------
+Intra vs Inter reuse count 4009357488, 8192
+              distribution 0.999998, 0.000002
+64 256 --------
+Intra vs Inter reuse count 3343100256, 16384
+              distribution 0.999995, 0.000005
+64 512 --------
+Intra vs Inter reuse count 3038059200, 32768
+              distribution 0.999989, 0.000011
+64 1024 --------
+Intra vs Inter reuse count 2941618560, 65536
+              distribution 0.999978, 0.000022
+128 32 --------
+Intra vs Inter reuse count 5842521176, 6144
+              distribution 0.999999, 0.000001
+128 64 --------
+Intra vs Inter reuse count 3487377584, 8192
+              distribution 0.999998, 0.000002
+128 128 --------
+Intra vs Inter reuse count 2316034400, 12288
+              distribution 0.999995, 0.000005
+128 256 --------
+Intra vs Inter reuse count 1742820032, 20480
+              distribution 0.999988, 0.000012
+128 512 --------
+Intra vs Inter reuse count 1481127296, 36864
+              distribution 0.999975, 0.000025
+128 1024 --------
+Intra vs Inter reuse count 1399919360, 69632
+              distribution 0.999950, 0.000050
+256 32 --------
+Intra vs Inter reuse count 3657570480, 14336
+              distribution 0.999996, 0.000004
+256 64 --------
+Intra vs Inter reuse count 2062635360, 16384
+              distribution 0.999992, 0.000008
+256 128 --------
+Intra vs Inter reuse count 1269809856, 20480
+              distribution 0.999984, 0.000016
+256 256 --------
+Intra vs Inter reuse count 882681216, 28672
+              distribution 0.999968, 0.000032
+256 512 --------
+Intra vs Inter reuse count 707685120, 45056
+              distribution 0.999936, 0.000064
+256 1024 --------
+Intra vs Inter reuse count 656942592, 77824
+              distribution 0.999882, 0.000118
+512 32 --------
+Intra vs Inter reuse count 457879904, 30720
+              distribution 0.999933, 0.000067
+512 64 --------
+Intra vs Inter reuse count 383361728, 32768
+              distribution 0.999915, 0.000085
+512 128 --------
+Intra vs Inter reuse count 347571584, 36864
+              distribution 0.999894, 0.000106
+512 256 --------
+Intra vs Inter reuse count 332614400, 45056
+              distribution 0.999865, 0.000135
+512 512 --------
+Intra vs Inter reuse count 331011584, 61440
+              distribution 0.999814, 0.000186
+512 1024 --------
+Intra vs Inter reuse count 341199872, 94208
+              distribution 0.999724, 0.000276
+1024 32 --------
+Intra vs Inter reuse count 256060960, 63488
+              distribution 0.999752, 0.000248
+1024 64 --------
+Intra vs Inter reuse count 205872192, 65536
+              distribution 0.999682, 0.000318
+1024 128 --------
+Intra vs Inter reuse count 180992128, 69632
+              distribution 0.999615, 0.000385
+1024 256 --------
+Intra vs Inter reuse count 168980736, 77824
+              distribution 0.999540, 0.000460
+1024 512 --------
+Intra vs Inter reuse count 163832320, 94208
+              distribution 0.999425, 0.000575
+1024 1024 --------
+Intra vs Inter reuse count 162972672, 126976
+              distribution 0.999221, 0.000779

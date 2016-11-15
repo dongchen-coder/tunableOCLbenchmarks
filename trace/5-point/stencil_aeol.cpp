@@ -197,11 +197,13 @@ int main() {
 			cout << i << " " << j << " --------" << endl;
 			stencil_trace_GXYW(a, b, 1024, i, j, 1024/i, 1024/j);		
 			
-			aeol();
+			calculateRTDistribution();
+
+			//aeol();
 			//dumpD();
 			//dumpf();
 			//dumpe();
-			dumpInterRT();			
+			//dumpInterRT();			
 
 			reset();
 		}

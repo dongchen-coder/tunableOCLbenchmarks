@@ -20,6 +20,10 @@ linear-algebra/kernels/
 
 	gesummv
 
+	mvt
+
+	syrk
+
 stencils/
 
 	convolution-2d

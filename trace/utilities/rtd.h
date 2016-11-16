@@ -4,48 +4,44 @@
 #include <set>
 using namespace std;
 
-std::set<uint64_t> D;
-std::map<uint64_t, std::map<uint64_t, uint64_t> > DtoC;
+std::set<uint64_t> D_w; 
+std::map<uint64_t, uint64_t> DtoC;
+
+uint64_t wgid_s = 0;
+uint64_t intraC = 0;
+uint64_t interC = 0;
 
 void accessRTD(uint64_t addr, uint64_t wgid) {
 	
-	if (DtoC.find(wgid) != DtoC.end()) {
-		if (DtoC[wgid].find(addr) != DtoC[wgid].end()) {
-			DtoC[wgid][addr] += 1;
-		} else {
-			DtoC[wgid][addr] = 1;
+	if (wgid != wgid_s) {
+		wgid_s = wgid;
+		for (std::set<uint64_t>::iterator it = D_w.begin(), eit = D_w.end(); it != eit; ++it) {
+			if (DtoC.find(*it) != DtoC.end()) {
+				DtoC[*it]++;
+			} else {
+				DtoC[*it] = 1;
+			}
 		}
+		D_w.clear();
+		D_w.insert(addr);
 	} else {
-		DtoC[wgid][addr] = 1;
+		if(D_w.find(addr) != D_w.end()) {
+			intraC++;	
+		} else {
+			D_w.insert(addr);
+		}
 	}
 
-	D.insert(addr);
 	return;
 }
 
 void calculateRTD() {
-    uint64_t intraC = 0;
-    uint64_t interC = 0;
     double intraD = 0;
     double interD = 0;
-	
-	int N = DtoC.size();
 
-    for (int i = 0; i < N; i++) {
-        for (std::map<uint64_t, uint64_t>::iterator it = DtoC[i].begin(), eit = DtoC[i].end(); it != eit; ++it) {
-            intraC += it->second;
-        }
-    }
-
-    for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
-        int tmp = 0;
-        for (int i = 0; i < N; i++) {
-            if (DtoC[i].find(*it) != DtoC[i].end()) {
-                tmp++;
-            }
-        }
-        interC += tmp - 1;
-    }
+	for (std::map<uint64_t, uint64_t>::iterator it = DtoC.begin(), eit = DtoC.end(); it != eit; ++it) {
+		interC += it->second - 1;
+	}
 
     intraD = (double) intraC / (intraC + interC);
     interD = (double) interC / (intraC + interC);
@@ -57,7 +53,10 @@ void calculateRTD() {
 }
 
 void resetRTD() {
-	D.clear();
+	wgid_s = 0;
+	intraC = 0;
+	interC = 0;	
+	D_w.clear();
 	DtoC.clear();
 	return;
 }

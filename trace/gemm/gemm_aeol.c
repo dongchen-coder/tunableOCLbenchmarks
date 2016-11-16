@@ -112,9 +112,9 @@ int main() {
 	int ni, nj, nk;
 	float alpha, beta;	
 
-	ni = 512;
-	nj = 512;
-	nk = 512;
+	ni = 32;
+	nj = 32;
+	nk = 32;
 
 	alpha = 0.3;
 	beta = 0.5;
@@ -126,8 +126,8 @@ int main() {
 
 	uint64_t gidx, gidy, lidx, lidy;
 	
-	lidx = 32;
-	lidy = 32;
+	lidx = 1;
+	lidy = 1;
 	
 	gidx = (uint64_t)ceil(((float)nj) / ((float)lidx)) * lidx;
 	gidy = (uint64_t)ceil(((float)ni) / ((float)lidy)) * lidy;

@@ -1,7 +1,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "../utilities/aeol.h"
+//#include "../utilities/aeol.h"
+#include "../utilities/rtd.h"
+
 
 void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, int nj, int nk, int cX, int cY, int widx, int widy, int lidx, int lidy) {
 
@@ -24,15 +26,19 @@ void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, in
 								//printf("%d %d\n", j, i);
                 				C[i * nj + j] *= beta;
 
-								access(i * nj + j + ni*nk + nk*nj, wy*widx+wx);								
+								//access(i * nj + j + ni * nk + nk * nj, wy*widx+wx);								
+								accessRTD(i * nj + j + ni * nk + nk * nj, wy*widx+wx);
 
                 				int k;
                 				for(k=0; k < nk; k++)
                 				{
                     				C[i * nj + j] += alpha * A[i * nk + k] * B[k * nj +j];
-                					access(i * nk + k, wy*widx+wx);
-									access(k * nj +j + ni * nk, wy*widx+wx);
-									access(i * nj + j + ni*nk + nk*nj, wy*widx+wx);
+                					//access(i * nk + k, wy*widx+wx);
+									//access(k * nj +j + ni * nk, wy*widx+wx);
+									//access(i * nj + j + ni * nk + nk * nj, wy*widx+wx);
+									accessRTD(i * nk + k, wy*widx+wx);
+                                    accessRTD(k * nj +j + ni * nk, wy*widx+wx);
+                                    accessRTD(i * nj + j + ni * nk + nk * nj, wy*widx+wx);
 								}
             				}
         				}
@@ -121,7 +127,7 @@ int main() {
 	uint64_t gidx, gidy, lidx, lidy;
 	
 	lidx = 32;
-	lidy = 8;
+	lidy = 32;
 	
 	gidx = (uint64_t)ceil(((float)nj) / ((float)lidx)) * lidx;
 	gidy = (uint64_t)ceil(((float)ni) / ((float)lidy)) * lidy;
@@ -134,6 +140,7 @@ int main() {
 		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
 	//int cX = 1;
 	//int cY = 1;
+			resetRTD();
 
 			int globalWorkSizeC[2];
 			globalWorkSizeC[0] = gidx / cX;
@@ -149,7 +156,7 @@ int main() {
 				printf("Result does not MATCH\n");
 			}
 			
-			calculateRTDistribution();
+			calculateRTD();
 			
 		}
 	}

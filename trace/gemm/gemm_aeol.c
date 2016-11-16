@@ -112,9 +112,9 @@ int main() {
 	int ni, nj, nk;
 	float alpha, beta;	
 
-	ni = 32;
-	nj = 32;
-	nk = 32;
+	ni = 512;
+	nj = 512;
+	nk = 512;
 
 	alpha = 0.3;
 	beta = 0.5;

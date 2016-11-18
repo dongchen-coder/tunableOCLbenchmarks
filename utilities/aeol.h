@@ -79,6 +79,11 @@ void reset() {
 	return;
 }
 
+void verify_aeol() {
+	
+	return;
+}
+
 void aeol() {
 
 	std::map<uint64_t, std::vector<uint64_t>* > F;

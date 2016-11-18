@@ -1,4 +1,4 @@
-#include "../utilities/aeol.h"
+#include "../../utilities/aeol.h"
 
 
 void stencil(int * a, int * b, unsigned int dim_size, int isize, int jsize, int gxsize, int gysize)

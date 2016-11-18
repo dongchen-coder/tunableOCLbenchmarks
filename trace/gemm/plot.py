@@ -1,7 +1,7 @@
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import axes3d
+#from mpl_toolkits.mplot3d import axes3d
 
 f = open('res.txt', 'r')
 
@@ -51,11 +51,13 @@ for i in x:
 		tmpInterCz.append(interC[i][j])
 		tmpIntraDz.append(intraD[i][j])
 		tmpInterDz.append(interD[i][j])
+		print interD[i][j],
+	print ''
 	intraCz.append(tmpIntraCz)
 	interCz.append(tmpInterCz)
 	intraDz.append(tmpIntraDz)
 	interDz.append(tmpInterDz)
-	
+'''	
 x = [1,2,3,4,5,6,7,8,9,10]
 y = [1,2,3,4,5,6,7,8,9,10]
 
@@ -67,14 +69,14 @@ surf = ax.plot_surface(x, y, intraDz)
 
 ax.set_zlim(0, 1)
 
-#ax.set_xscale('log')
-#ax.set_yscale('log')
+ax.set_xscale('log')
+ax.set_yscale('log')
 
 print x
 print y
 print interDz
 
 plt.show()
-
+'''
 
 

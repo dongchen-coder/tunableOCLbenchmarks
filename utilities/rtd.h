@@ -39,6 +39,14 @@ void calculateRTD() {
     double intraD = 0;
     double interD = 0;
 
+	for (std::set<uint64_t>::iterator it = D_w.begin(), eit = D_w.end(); it != eit; ++it) {
+		if (DtoC.find(*it) != DtoC.end()) {
+			DtoC[*it]++;
+		} else {
+			DtoC[*it] = 1;
+		}
+	}
+
 	for (std::map<uint64_t, uint64_t>::iterator it = DtoC.begin(), eit = DtoC.end(); it != eit; ++it) {
 		interC += it->second - 1;
 	}

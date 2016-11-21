@@ -1,12 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-//#include "../utilities/aeol.h"
-#include "../../../utilities/rtd.h"
 
-
-void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, int nj, int nk, int cX, int cY, int widx, int widy, int lidx, int lidy) {
-
+void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, int nj, int nk, int cX, int cY, int widx, int widy, int lidx, int lidy, void (*access)(uint64_t addr, uint64_t wgid)) {
 	//printf("wdix %d wdiy %d; cX %d cY %d; lidx %d lidy %d\n", widx, widy, cX, cY, lidx, lidy);
 
 	/* iterate over work group */
@@ -26,19 +22,15 @@ void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, in
 								//printf("%d %d\n", j, i);
                 				C[i * nj + j] *= beta;
 
-								//access(i * nj + j + ni * nk + nk * nj, wy*widx+wx);								
-								accessRTD(i * nj + j + ni * nk + nk * nj, wy*widx+wx);
+								(*access)(i * nj + j + ni * nk + nk * nj, wy * widx + wx);
 
                 				int k;
                 				for(k=0; k < nk; k++)
                 				{
                     				C[i * nj + j] += alpha * A[i * nk + k] * B[k * nj +j];
-                					//access(i * nk + k, wy*widx+wx);
-									//access(k * nj +j + ni * nk, wy*widx+wx);
-									//access(i * nj + j + ni * nk + nk * nj, wy*widx+wx);
-									accessRTD(i * nk + k, wy*widx+wx);
-                                    accessRTD(k * nj +j + ni * nk, wy*widx+wx);
-                                    accessRTD(i * nj + j + ni * nk + nk * nj, wy*widx+wx);
+									(*access)(i * nk + k, wy * widx + wx);
+                                    (*access)(k * nj +j + ni * nk, wy * widx + wx);
+                                    (*access)(i * nj + j + ni * nk + nk * nj, wy * widx + wx);
 								}
             				}
         				}
@@ -103,7 +95,7 @@ bool verify (float * C, float * C_ref, int ni, int nj) {
 	return true;
 }
 
-int main() {	
+int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {	
 	
 	float *A;
 	float *B;
@@ -138,9 +130,8 @@ int main() {
 
 	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
 		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-	//int cX = 1;
-	//int cY = 1;
-			resetRTD();
+			
+			(*reset)();
 
 			int globalWorkSizeC[2];
 			globalWorkSizeC[0] = gidx / cX;
@@ -151,12 +142,12 @@ int main() {
 
 			printf("global work size %d, %d local work size %llu, %llu\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
 	
-			gemm_GXYW(A, B, C, alpha, beta, ni, nj, nk, cX, cY, globalWorkSizeC[0]/lidx, globalWorkSizeC[1]/lidy, lidx, lidy);
+			gemm_GXYW(A, B, C, alpha, beta, ni, nj, nk, cX, cY, globalWorkSizeC[0]/lidx, globalWorkSizeC[1]/lidy, lidx, lidy, access);
 			if (verify(C, C_ref, ni, nj) == false) {
 				printf("Result does not MATCH\n");
 			}
 			
-			calculateRTD();
+			(*calculate)();
 			
 		}
 	}

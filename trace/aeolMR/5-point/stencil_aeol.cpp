@@ -1,4 +1,4 @@
-#include "../../utilities/aeol.h"
+#include "../../../utilities/aeol.h"
 
 
 void stencil(int * a, int * b, unsigned int dim_size, int isize, int jsize, int gxsize, int gysize)
@@ -197,13 +197,11 @@ int main() {
 			cout << i << " " << j << " --------" << endl;
 			stencil_trace_GXYW(a, b, 1024, i, j, 1024/i, 1024/j);		
 			
-			calculateRTDistribution();
-
-			//aeol();
-			//dumpD();
-			//dumpf();
-			//dumpe();
-			//dumpInterRT();			
+			aeol();
+			dumpD();
+			dumpf();
+			dumpe();
+			dumpInterRT();			
 
 			reset();
 		}

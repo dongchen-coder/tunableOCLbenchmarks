@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <math.h>
 //#include "../utilities/aeol.h"
-#include "../../utilities/rtd.h"
+#include "../../../utilities/rtd.h"
 
 
 void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int ni, int nj, int nk, int cX, int cY, int widx, int widy, int lidx, int lidy) {

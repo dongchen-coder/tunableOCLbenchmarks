@@ -10,24 +10,13 @@ std::map<uint64_t, std::map<uint64_t, uint64_t> > e;
 std::map<uint64_t, std::map<uint64_t, uint64_t> > rt;
 std::map<uint64_t, uint64_t> L;
 std::map<uint64_t, uint64_t> prevs;
-
 std::set<uint64_t> D;
-
 std::map<uint64_t, double> interRT;
 
 unsigned long ref_time = 0;
 
-std::map<uint64_t, double> nfactorial;
+//std::map<uint64_t, double> nfactorial;
 uint64_t N = 0;
-
-void factorial(uint64_t n) {
-	nfactorial[0] = 1;
-	nfactorial[1] = 1;
-	for (uint64_t i = 2; i < n; i++) {
-		nfactorial[i] = nfactorial[i-1] * i; 
-	}
-	return;
-}
 
 void access(uint64_t addr, uint64_t wgid) {
 
@@ -72,17 +61,21 @@ void reset() {
 	N = 0;
 	ref_time = 0;
 	interRT.clear();		
-	nfactorial.clear();
 	L.clear();
 	D.clear();
 	
 	return;
 }
 
-void verify_aeol() {
-	
-	return;
+double averagedCount(int n, int m, int i) {
+	//printf("Caculate n m i %d %d %d\n", n, m, i);
+	double res = 1;
+	for (int j = 0; j < i; j++) {
+		res *= double (m-j) / (n-j);
+	}
+	return res / (n-i);
 }
+
 
 void aeol() {
 
@@ -135,8 +128,6 @@ void aeol() {
 
 	/* alg 2 */	
 
-	factorial(N);
-
 	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
 		//cout << "d " << *it << endl;
 		for (std::vector<uint64_t>::iterator fit = F[*it]->begin(), efit = F[*it]->end(); fit != efit; ++fit) {
@@ -148,9 +139,9 @@ void aeol() {
 					uint64_t tmpRT = *eit + aveL[*it] * i + *fit - 1;
 					//cout << "rt " << tmpRT << endl;
 					if (interRT.find(tmpRT) != interRT.end()) {
-						interRT[tmpRT] += nfactorial[i] * nfactorial[N-i-1] * nfactorial[M[*it]] / nfactorial[i] / nfactorial[M[*it]-i];
+						interRT[tmpRT] += averagedCount(N, M[*it], i);
 					} else {
-						interRT[tmpRT] = nfactorial[i] * nfactorial[N-i-1] * nfactorial[M[*it]] / nfactorial[i] / nfactorial[M[*it] - i];
+						interRT[tmpRT] = averagedCount(N, M[*it], i);
 					}								
 				}
 			}
@@ -159,12 +150,11 @@ void aeol() {
 			if (f[j].find(*it) != f[j].end()) {
 				for (int i = 0; i <= M[*it]; i++) {
 					uint64_t tmpRT = e[j][*it] + aveL[*it] * i + f[j][*it] - 1;
-					interRT[tmpRT] -= nfactorial[i] * nfactorial[N - i - 1] * nfactorial[M[*it]] / nfactorial[i] / nfactorial[M[*it] - i];
+					interRT[tmpRT] -= averagedCount(N, M[*it], i);
 				}
 			}
 		}
 	}	
-
 	return;
 }
 

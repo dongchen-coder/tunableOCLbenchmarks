@@ -161,7 +161,9 @@ void aeol() {
 
 void dumpInterRT() {
 	for (std::map<uint64_t, double>::iterator it = interRT.begin(), eit = interRT.end(); it != eit; ++it) {
-		cout << it->first << "	" << it->second << endl;
+		if (it->second != 0) {
+			cout << it->first << "	" << it->second << endl;
+		}
 	}
 	return;
 }

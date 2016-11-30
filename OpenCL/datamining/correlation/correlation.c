@@ -480,8 +480,7 @@ void cl_clean_up()
 }
 
 
-void correlation(int m, int n, DATA_TYPE POLYBENCH_2D(data, M, N, m, n), DATA_TYPE POLYBENCH_1D(mean, M, m), DATA_TYPE POLYBENCH_1D(stddev, M, m),
-		DATA_TYPE POLYBENCH_2D(symmat, M, N, m, n))
+void correlation(int m, int n, DATA_TYPE POLYBENCH_2D(data, M, N, m, n), DATA_TYPE POLYBENCH_1D(mean, M, m), DATA_TYPE POLYBENCH_1D(stddev, M, m), DATA_TYPE POLYBENCH_2D(symmat, M, N, m, n))
 {
 	int i, j, j1, j2;	
 	

@@ -248,28 +248,28 @@ void cl_launch_kernel(int ni, int nj, int nk, int nl, int nm)
 	
 	
 	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-    for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-        int coalescing[2];
-        coalescing[0] = cX;
-        coalescing[1] = cY;
-        errcode |= clSetKernelArg(clKernel1, 6, sizeof(int), (void *)&cX);
-        errcode |= clSetKernelArg(clKernel1, 7, sizeof(int), (void *)&cY);
-        if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
+		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+			int coalescing[2];
+			coalescing[0] = cX;
+			coalescing[1] = cY;
+			errcode |= clSetKernelArg(clKernel1, 6, sizeof(int), (void *)&cX);
+			errcode |= clSetKernelArg(clKernel1, 7, sizeof(int), (void *)&cY);
+			if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
 
-        size_t globalWorkSizeC[2];
-        globalWorkSizeC[0] = globalWorkSize[0] / cX;
-        globalWorkSizeC[1] = globalWorkSize[1] / cY;
+			size_t globalWorkSizeC[2];
+			globalWorkSizeC[0] = globalWorkSize[0] / cX;
+			globalWorkSizeC[1] = globalWorkSize[1] / cY;
 				
-				polybench_start_instruments;
+			polybench_start_instruments;
 
-				// Execute the OpenCL kernel
-				for (int i = 0; i < iter; i++) {
-					errcode = clEnqueueNDRangeKernel(clCommandQue, clKernel1, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);	
-					if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
+			// Execute the OpenCL kernel
+			for (int i = 0; i < iter; i++) {
+				errcode = clEnqueueNDRangeKernel(clCommandQue, clKernel1, 2, NULL, globalWorkSize, localWorkSize, 0, NULL, NULL);	
+				if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
 					clEnqueueBarrier(clCommandQue);
-				}
+			}
 
-				printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
+			printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
     		polybench_stop_instruments;
   			polybench_print_instruments;				
 		

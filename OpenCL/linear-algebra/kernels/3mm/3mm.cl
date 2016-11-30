@@ -20,12 +20,12 @@ __kernel void mm3_kernel1(__global DATA_TYPE *A, __global DATA_TYPE *B, __global
 {    
 
 	for (int y = 0; y < cY; y++) {
-    for (int x = 0; x < cX; x++) {
+		for (int x = 0; x < cX; x++) {
 			//int j = get_global_id(0);
 			//int i = get_global_id(1);
 	
 			int j = (get_group_id(0) * cX + x) * get_local_size(0) + get_local_id(0);
-      int i = (get_group_id(1) * cY + y) * get_local_size(1) + get_local_id(1);
+			int i = (get_group_id(1) * cY + y) * get_local_size(1) + get_local_id(1);
 
 			if ((i < ni) && (j < nj))
 			{

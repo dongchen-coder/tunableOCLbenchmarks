@@ -208,6 +208,18 @@ void cl_load_prog()
 	errcode = clBuildProgram(clProgram, 1, &device_id, NULL, NULL, NULL);
 	if(errcode != CL_SUCCESS) printf("Error in building program, %d\n", errcode);
 		
+	if (errcode == CL_BUILD_PROGRAM_FAILURE) {
+		// Determine the size of the log
+		size_t log_size;
+		clGetProgramBuildInfo(clProgram, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
+		// Allocate memory for the log
+		char *log = (char *) malloc(log_size);
+		// Get the log
+		clGetProgramBuildInfo(clProgram, device_id, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
+		// Print the log
+		printf("%s\n", log);
+	}
+	
 	// Create the OpenCL kernels
 	clKernel1 = clCreateKernel(clProgram, "mm3_kernel1", &errcode);
 	if(errcode != CL_SUCCESS) printf("Error in creating kernel\n");
@@ -230,12 +242,12 @@ void cl_launch_kernel(int ni, int nj, int nk, int nl, int nm)
 	globalWorkSize[1] = (size_t)ceil(((float)NI) / ((float)DIM_LOCAL_WORK_GROUP_Y)) * DIM_LOCAL_WORK_GROUP_Y;
 
 	size_t coalescingMax[2];
-  coalescingMax[0] = globalWorkSize[0] / localWorkSize[0];
-  coalescingMax[1] = globalWorkSize[1] / localWorkSize[1];
-  int iter = 10;
+	coalescingMax[0] = globalWorkSize[0] / localWorkSize[0];
+	coalescingMax[1] = globalWorkSize[1] / localWorkSize[1];
+	int iter = 10;
 
 	/* Start timer. */
-  //	polybench_start_instruments;
+	//	polybench_start_instruments;
 	
 	// Set the arguments of the kernel
 	errcode =  clSetKernelArg(clKernel1, 0, sizeof(cl_mem), (void *)&a_mem_obj);
@@ -270,8 +282,8 @@ void cl_launch_kernel(int ni, int nj, int nk, int nl, int nm)
 			}
 
 			printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
-    		polybench_stop_instruments;
-  			polybench_print_instruments;				
+			polybench_stop_instruments;
+			polybench_print_instruments;				
 		
 		}
 	}
@@ -290,34 +302,35 @@ void cl_launch_kernel(int ni, int nj, int nk, int nl, int nm)
 	if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
 
 	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-    for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-        int coalescing[2];
-        coalescing[0] = cX;
-        coalescing[1] = cY;
-        errcode |= clSetKernelArg(clKernel1, 6, sizeof(int), (void *)&cX);
-        errcode |= clSetKernelArg(clKernel1, 7, sizeof(int), (void *)&cY);
-        if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
+		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+			int coalescing[2];
+			coalescing[0] = cX;
+			coalescing[1] = cY;
+			errcode |= clSetKernelArg(clKernel2, 6, sizeof(int), (void *)&cX);
+			errcode |= clSetKernelArg(clKernel2, 7, sizeof(int), (void *)&cY);
+			if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
 
-        size_t globalWorkSizeC[2];
-        globalWorkSizeC[0] = globalWorkSize[0] / cX;
-        globalWorkSizeC[1] = globalWorkSize[1] / cY;
- 
-        polybench_start_instruments;
+			size_t globalWorkSizeC[2];
+			globalWorkSizeC[0] = globalWorkSize[0] / cX;
+			globalWorkSizeC[1] = globalWorkSize[1] / cY;
 
-				for (int i = 0; i < iter; i++) {
-					// Execute the OpenCL kernel
-					errcode = clEnqueueNDRangeKernel(clCommandQue, clKernel2, 2, NULL, globalWorkSizeC, localWorkSize, 0, NULL, NULL);	
-					if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
-					clEnqueueBarrier(clCommandQue);
-				}		
+			polybench_start_instruments;
 
-				printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
-        polybench_stop_instruments;
-        polybench_print_instruments;
- 
-    }
-  }
+			for (int i = 0; i < iter; i++) {
+				// Execute the OpenCL kernel
+				errcode = clEnqueueNDRangeKernel(clCommandQue, clKernel2, 2, NULL, globalWorkSizeC, localWorkSize, 0, NULL, NULL);	
+				if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
+				clEnqueueBarrier(clCommandQue);
+			}
 
+			printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
+			polybench_stop_instruments;
+			polybench_print_instruments;
+
+		}
+	}
+
+	/* Kernel 3 */
 
 	globalWorkSize[0] = (size_t)ceil(((float)NL) / ((float)DIM_LOCAL_WORK_GROUP_X)) * DIM_LOCAL_WORK_GROUP_X;
 	globalWorkSize[1] = (size_t)ceil(((float)NI) / ((float)DIM_LOCAL_WORK_GROUP_Y)) * DIM_LOCAL_WORK_GROUP_Y;
@@ -331,38 +344,32 @@ void cl_launch_kernel(int ni, int nj, int nk, int nl, int nm)
 	if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
 
 	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-    for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-        int coalescing[2];
-        coalescing[0] = cX;
-        coalescing[1] = cY;
-        errcode |= clSetKernelArg(clKernel1, 6, sizeof(int), (void *)&cX);
-        errcode |= clSetKernelArg(clKernel1, 7, sizeof(int), (void *)&cY);
-        if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
+		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+			int coalescing[2];
+			coalescing[0] = cX;
+			coalescing[1] = cY;
+			errcode |= clSetKernelArg(clKernel3, 6, sizeof(int), (void *)&cX);
+			errcode |= clSetKernelArg(clKernel3, 7, sizeof(int), (void *)&cY);
+			if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
 
-        size_t globalWorkSizeC[2];
-        globalWorkSizeC[0] = globalWorkSize[0] / cX;
-        globalWorkSizeC[1] = globalWorkSize[1] / cY;
+			size_t globalWorkSizeC[2];
+			globalWorkSizeC[0] = globalWorkSize[0] / cX;
+			globalWorkSizeC[1] = globalWorkSize[1] / cY;
 
-        polybench_start_instruments;
+			polybench_start_instruments;
 
-        for (int i = 0; i < iter; i++) {
+			for (int i = 0; i < iter; i++) {
+				// Execute the OpenCL kernel
+				errcode = clEnqueueNDRangeKernel(clCommandQue, clKernel3, 2, NULL, globalWorkSizeC, localWorkSize, 0, NULL, NULL);	
+				if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
+				clFinish(clCommandQue);
+			}
+			printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
+			polybench_stop_instruments;
+			polybench_print_instruments;
+		}
+	}
 
-					// Execute the OpenCL kernel
-					errcode = clEnqueueNDRangeKernel(clCommandQue, clKernel3, 2, NULL, globalWorkSizeC, localWorkSize, 0, NULL, NULL);	
-					if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
-					clFinish(clCommandQue);
-				}
-				printf("Work group number %lu %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY);
-        polybench_stop_instruments;
-        polybench_print_instruments;
-
-    }
-  }
-
-	/* Stop and print timer. */
-	//printf("GPU Time in seconds:\n");
-  //	polybench_stop_instruments;
- 	//polybench_print_instruments;
 }
 
 void cl_clean_up()
@@ -445,14 +452,14 @@ static
 void print_array(int ni, int nl,
 		 DATA_TYPE POLYBENCH_2D(G,NI,NL,ni,nl))
 {
-  int i, j;
+	int i, j;
 
-  for (i = 0; i < ni; i++)
-    for (j = 0; j < nl; j++) {
-	fprintf (stderr, DATA_PRINTF_MODIFIER, G[i][j]);
-	if ((i * ni + j) % 20 == 0) fprintf (stderr, "\n");
-    }
-  fprintf (stderr, "\n");
+	for (i = 0; i < ni; i++)
+		for (j = 0; j < nl; j++) {
+			fprintf (stderr, DATA_PRINTF_MODIFIER, G[i][j]);
+			if ((i * ni + j) % 20 == 0) fprintf (stderr, "\n");
+		}
+	fprintf (stderr, "\n");
 }
 
 
@@ -489,7 +496,7 @@ int main(int argc, char *argv[])
 	#ifdef RUN_ON_CPU
 
 		/* Start timer. */
-	  	polybench_start_instruments;
+		polybench_start_instruments;
 
 		mm3_cpu(ni, nj, nk, nl, nm, POLYBENCH_ARRAY(E), POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(F), POLYBENCH_ARRAY(C), 
 			POLYBENCH_ARRAY(D), POLYBENCH_ARRAY(G));

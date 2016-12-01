@@ -40,35 +40,48 @@ __kernel void mm3_kernel1(__global DATA_TYPE *A, __global DATA_TYPE *B, __global
 	}
 }
 
-__kernel void mm3_kernel2(__global DATA_TYPE *C, __global DATA_TYPE *D, __global DATA_TYPE *F, int nj, int nl, int nm) 
+__kernel void mm3_kernel2(__global DATA_TYPE *C, __global DATA_TYPE *D, __global DATA_TYPE *F, int nj, int nl, int nm, int cX, int cY) 
 {
-	int j = get_global_id(0);
-	int i = get_global_id(1);
-	
-	if ((i < nj) && (j < nl))
-	{
-		int k;
-		F[i*nl + j] = 0;
-		for(k=0; k < nm; k++)
-		{
-			F[i * nl + j] += C[i * nm + k] * D[k * nl +j];
+	//int j = get_global_id(0);
+	//int i = get_global_id(1);
+		
+	for (int y = 0; y < cY; y++) {
+		for (int x = 0; x < cX; x++) {
+			int j = (get_group_id(0) * cX + x) * get_local_size(0) + get_local_id(0);
+			int i = (get_group_id(1) * cY + y) * get_local_size(1) + get_local_id(1);
+
+			if ((i < nj) && (j < nl))
+			{
+				int k;
+				F[i*nl + j] = 0;
+				for(k=0; k < nm; k++)
+				{
+					F[i * nl + j] += C[i * nm + k] * D[k * nl +j];
+				}
+			}
 		}
 	}
-
 }
 
-__kernel void mm3_kernel3(__global DATA_TYPE *E, __global DATA_TYPE *F, __global DATA_TYPE *G, int ni, int nl, int nj) 
+__kernel void mm3_kernel3(__global DATA_TYPE *E, __global DATA_TYPE *F, __global DATA_TYPE *G, int ni, int nl, int nj, int cX, int cY) 
 {    
-	int j = get_global_id(0);
-	int i = get_global_id(1);
+	//int j = get_global_id(0);
+	//int i = get_global_id(1);
 	
-	if ((i < ni) && (j < nl))
-	{
-		int k;
-		G[i*nl + j] = 0;
-		for(k=0; k < nj; k++)
-		{
-			G[i * nl + j] += E[i * nj + k] * F[k * nl + j];
+	for (int y = 0; y < cY; y++) {
+		for (int x = 0; x < cX; x++) {
+			int j = (get_group_id(0) * cX + x) * get_local_size(0) + get_local_id(0);
+			int i = (get_group_id(1) * cY + y) * get_local_size(1) + get_local_id(1);
+
+			if ((i < ni) && (j < nl))
+			{
+				int k;
+				G[i*nl + j] = 0;
+				for(k=0; k < nj; k++)
+				{
+					G[i * nl + j] += E[i * nj + k] * F[k * nl + j];
+				}
+			}
 		}
 	}
 }

@@ -178,6 +178,11 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 		}
 	}
 
+	gidx = (int)ceil(((float)NY) / ((float)lidx)) * lidx;
+    gidy = 1;
+    coalescingMax[0] = gidx / lidx;
+    coalescingMax[1] = gidy / lidy;
+
 	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
 		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
 

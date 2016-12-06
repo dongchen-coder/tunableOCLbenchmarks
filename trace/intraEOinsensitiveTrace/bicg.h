@@ -1,10 +1,11 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define NX 4096
 #define NY 4096
-#define DIM_LOCAL_WORK_GROUP_X 256
+#define DIM_LOCAL_WORK_GROUP_X 16
 #define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
@@ -128,7 +129,7 @@ void verify_kernel1(float *q, float *q_ref) {
 	
 	for (int i = 0; i < NX; i++) {
 		if (q[i] != q_ref[i]) {
-			printf("Error in kernel1\n");
+			cout << "Error in kernel1" << endl;
 			return;
 		}
 	}
@@ -139,7 +140,7 @@ void verify_kernel2(float *s, float *s_ref) {
 
 	for (int i = 0; i < NY; i++) {	
 		if (s[i] != s_ref[i]) {
-			printf("Error in kernel2\n");
+			cout << "Error in kernel2" << endl;
 			return;
 		}
 	}
@@ -181,10 +182,11 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
+
 			bicg_kernel1_GXYW(A, p, q, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel1(q, q_ref);
@@ -205,10 +207,10 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			bicg_kernel2_GXYW(A, r, s, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel2(s, s_ref);

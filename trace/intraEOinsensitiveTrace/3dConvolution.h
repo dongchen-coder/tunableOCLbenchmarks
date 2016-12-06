@@ -1,14 +1,14 @@
-
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define NI 256
 #define NJ 256
 #define NK 256
 
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ * NK
@@ -135,8 +135,8 @@ void verify_kernel(float *B, float *B_ref) {
 	for (int i = 1; i < NI - 1; i++) {
 		for (int j = 1; j < NJ - 1; j++) {
 			for (int k = 1; k < NK - 1; k++) {
-				if (B[i * NJ * NK + j * NK + k] != B_ref[i * NJ * NK + j * NK + k]) {
-					printf("Error in kernel\n");
+				if ((B[i * NJ * NK + j * NK + k] - B_ref[i * NJ * NK + j * NK + k]) / B_ref[i * NJ * NK + j * NK + k] > 1.05) {
+					cout << "Error in kernel" << endl;
 					return;
 				}
 			}
@@ -173,10 +173,10 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			for (int i = 1; i < NI - 1; i++) {
 				convolution3d_kernel_GXYW(A, B, i, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 			}

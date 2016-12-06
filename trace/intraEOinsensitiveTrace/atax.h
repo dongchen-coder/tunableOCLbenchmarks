@@ -1,11 +1,12 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define NX 4096
 #define NY 4096
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 1
 
 void atax_kernel1_GXYW(float *A, float *x, float *tmp, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
@@ -112,7 +113,7 @@ void verify_kernel1(float *tmp, float *tmp_ref) {
 	
 	for (int i = 0; i < NX; i++) {
 		if (tmp[i] != tmp_ref[i]) {
-			printf("kernel1 error\n");
+			cout << "kernel1 error" << endl;
 			return;
 		}
 	}
@@ -124,7 +125,7 @@ void verify_kernel2(float *y, float *y_ref) {
 
 	for (int i = 0; i < NY; i++) {
 		if (y[i] != y_ref[i]) {
-			printf("kernel2 error\n");
+			cout << "kernel2 error" << endl;
 			return;
 		}
 	}
@@ -165,10 +166,10 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			atax_kernel1_GXYW(A, x, tmp, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel1(tmp, tmp_ref);
@@ -189,10 +190,10 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			atax_kernel2_GXYW(A, tmp, y, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel2(y, y_ref);

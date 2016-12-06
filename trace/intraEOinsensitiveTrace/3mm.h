@@ -1,14 +1,15 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 # define NI 512
 # define NJ 512
 # define NK 512
 # define NL 512
 # define NM 512
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 1
 
 void threeMMkernel1_GXYW(float *A, float *B, float *E, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 	/* iterate over work group */
@@ -276,8 +277,8 @@ int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 			
 			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);		
 			threeMMkernel1_GXYW(A, B, E, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);			
@@ -300,8 +301,8 @@ int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			(*reset)();
 
             int globalWorkSizeC[2];
-            globalWorkSizeC[0] = gidx / cX;
-            globalWorkSizeC[1] = gidy / cY;
+            globalWorkSizeC[0] = (gidx / cX) / lidx;
+            globalWorkSizeC[1] = (gidy / cY) / lidy;
 	
 			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
 			threeMMkernel2_GXYW(C, D, F, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
@@ -324,8 +325,8 @@ int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			(*reset)();
 	
             int globalWorkSizeC[2];
-            globalWorkSizeC[0] = gidx / cX;
-            globalWorkSizeC[1] = gidy / cY;
+            globalWorkSizeC[0] = (gidx / cX) / lidx;
+            globalWorkSizeC[1] = (gidy / cY) / lidy;
 
 			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
 			threeMMkernel3_GXYW(E, F, G, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);	

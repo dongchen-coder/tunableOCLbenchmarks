@@ -1,10 +1,11 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define N 4096
 
-#define DIM_LOCAL_WORK_GROUP_X 256
+#define DIM_LOCAL_WORK_GROUP_X 16
 #define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
@@ -98,7 +99,7 @@ void verify(float *y, float * y_ref) {
 
 	for (int i = 0; i < N; i++) {
 		if (y[i] != y_ref[i]) {
-			printf("Error in kernel\n");
+			cout << "Error in kernel" << endl;
 			return;
 		}
 	}
@@ -144,10 +145,11 @@ int gesummv_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
+
 			gesummv_kernel(alpha, beta, A, B, x, tmp, y, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify(y, y_ref);

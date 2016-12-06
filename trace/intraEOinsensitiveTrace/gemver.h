@@ -1,13 +1,14 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define N 4096
-#define DIM_LOCAL_WORK_GROUP_KERNEL_1_X 32
-#define DIM_LOCAL_WORK_GROUP_KERNEL_1_Y 8
-#define DIM_LOCAL_WORK_GROUP_KERNEL_2_X 256
+#define DIM_LOCAL_WORK_GROUP_KERNEL_1_X 16
+#define DIM_LOCAL_WORK_GROUP_KERNEL_1_Y 1
+#define DIM_LOCAL_WORK_GROUP_KERNEL_2_X 16
 #define DIM_LOCAL_WORK_GROUP_KERNEL_2_Y 1
-#define DIM_LOCAL_WORK_GROUP_KERNEL_3_X 256
+#define DIM_LOCAL_WORK_GROUP_KERNEL_3_X 16
 #define DIM_LOCAL_WORK_GROUP_KERNEL_3_Y 1
 
 #define A_OFFSET 0
@@ -183,7 +184,7 @@ void verify_kernel1(float *A, float *A_ref) {
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
 			if (A[i * N + j] != A_ref[i * N + j]) {
-				printf("Error in kernel 1\n");
+				cout << "Error in kernel 1" << endl;
 				return;
 			}
 		}
@@ -196,7 +197,7 @@ void verify_kernel2(float *x, float *x_ref) {
 
 	for (int i = 0; i < N; i++) {
 		if (x[i] != x_ref[i]) {
-			printf("Error in kernel 2\n");
+			cout << "Error in kernel 2" << endl;
 			return;
 		}
 	}
@@ -207,7 +208,7 @@ void verify_kernel3(float *w, float *w_ref) {
 	
 	for (int i = 0; i < N; i++) {
 		if (w[i] != w_ref[i]) {
-			printf("Error in kernel 3\n");
+			cout << "Error in kernel 3" << endl;
 			return;
 		}
 	}
@@ -266,10 +267,10 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 
 			init_data(&alpha, &beta, A, u1, v1, u2, v2, w, x, y, z);
 
@@ -293,10 +294,10 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 
 			gemver_kernel2_GXYW(beta, A_ref, x, y, z, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
@@ -318,10 +319,10 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 
 			gemver_kernel3_GXYW(alpha, A_ref, x, w, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 

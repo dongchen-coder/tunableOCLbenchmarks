@@ -1,12 +1,13 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define NI 1024
 #define NJ 1024
 
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
 #define C_OFFSET NI * NJ
@@ -95,7 +96,7 @@ void verify_syrk_kernel(float *C, float *C_ref) {
 	for (int i = 0; i < NI; i++) {
 		for (int j = 0; j < NI; j++) {
 			if (C[i * NI + j] != C_ref[i * NI + j]) {
-				printf("Error in kernel\n");
+				cout << "Error in kernel" << endl;
 				return;
 			}
 		}
@@ -135,10 +136,11 @@ int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;		
+	
 			syrk_kernel_GXYW(alpha, beta, A, C, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_syrk_kernel(C, C_ref);

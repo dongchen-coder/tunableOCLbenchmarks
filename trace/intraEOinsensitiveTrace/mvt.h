@@ -1,12 +1,12 @@
-
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
 
 #define N 4096
 
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
 #define X1_OFFSET N * N
@@ -122,7 +122,7 @@ void verify_kernel1(float *x, float *x_ref) {
 
 	for (int i = 0; i < N; i++) {
 		if (x[i] != x_ref[i]) {
-			printf("Error in kernel1\n");
+			cout << "Error in kernel1" << endl;
 			return;
 		}
 	}
@@ -134,7 +134,7 @@ void verify_kernel2(float *x, float *x_ref) {
 
 	for (int i = 0; i < N; i++) {
 		if (x[i] != x_ref[i]) {
-			printf("Error in kernel2\n");
+			cout << "Error in kernel2" << endl;
 			return;
 		}
 	}
@@ -181,10 +181,11 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 			init_data(A, x1, x2, y1, y2);
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
+
 			mvt_kernel1_GXYW(A, x1, y1, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel1(x1, x1_ref);
@@ -204,10 +205,11 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / cX) / lidx;
+			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
+			
 			mvt_kernel2_GXYW(A, x2, y2, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel2(x2, x2_ref);

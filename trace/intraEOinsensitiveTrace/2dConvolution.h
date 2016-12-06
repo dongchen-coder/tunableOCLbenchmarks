@@ -1,6 +1,8 @@
 #include <stdlib.h>
-#include <stdio.h>
 #include <math.h>
+#include <iostream>
+using namespace std;
+
 
 #define NI 4096
 #define NJ 4096
@@ -110,7 +112,8 @@ void verify_kernel(double *B, double *B_ref) {
 	for (int i = 1; i < NI - 1; i++) {
 		for (int j = 1; j < NJ - 1; j++) {
 			if ((B[i * NJ + j] - B_ref[i * NJ + j]) / B_ref[i * NJ + j] > 1.05) {
-				printf("Error in kernel, %d, %d, %f, %f\n", i, j, B[i * NJ + j], B_ref[i * NJ + j]);
+				//printf("Error in kernel, %d, %d, %f, %f\n", i, j, B[i * NJ + j], B_ref[i * NJ + j]);
+				cout << "Error in kernel " << i << " " << j << " " << B[i * NJ + j] << " " << B_ref[i * NJ + j] << endl;
 				return;
 			}
 		}
@@ -149,7 +152,8 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			globalWorkSizeC[0] = (gidx / lidx) / cX;
 			globalWorkSizeC[1] = (gidy / lidy) / cY;
 
-			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			//printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
+			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			convolution2d_kernel_GXYW(A, B, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel(B, B_ref);

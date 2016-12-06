@@ -102,13 +102,11 @@ void init(int ni, int nj, DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj))
 {
 	int i, j;
 
-	for (i = 0; i < ni; ++i)
-    	{
-		for (j = 0; j < nj; ++j)
-		{
+	for (i = 0; i < ni; ++i) 	{
+		for (j = 0; j < nj; ++j) {
 			A[i][j] = (float)rand()/RAND_MAX;
-        	}
-    	}
+		}
+	}
 }
 
 
@@ -155,7 +153,7 @@ void cl_mem_init(DATA_TYPE POLYBENCH_2D(A, NI, NJ, ni, nj))
 
 	errcode = clEnqueueWriteBuffer(clCommandQue, a_mem_obj, CL_TRUE, 0, sizeof(DATA_TYPE) * NI * NJ, A, 0, NULL, NULL);
 	if(errcode != CL_SUCCESS)printf("Error in writing buffers\n");
- }
+}
 
 
 void cl_load_prog()
@@ -182,15 +180,15 @@ void cl_launch_kernel(int ni, int nj)
 	size_t localWorkSize[2], globalWorkSize[2];
 	localWorkSize[0] = DIM_LOCAL_WORK_GROUP_X;
 	localWorkSize[1] = DIM_LOCAL_WORK_GROUP_Y;
-	globalWorkSize[0] = (size_t)ceil(((float)NI) / ((float)DIM_LOCAL_WORK_GROUP_X)) * DIM_LOCAL_WORK_GROUP_X;
-	globalWorkSize[1] = (size_t)ceil(((float)NJ) / ((float)DIM_LOCAL_WORK_GROUP_Y)) * DIM_LOCAL_WORK_GROUP_Y;
+	globalWorkSize[0] = (size_t)ceil(((float)NJ) / ((float)DIM_LOCAL_WORK_GROUP_X)) * DIM_LOCAL_WORK_GROUP_X;
+	globalWorkSize[1] = (size_t)ceil(((float)NI) / ((float)DIM_LOCAL_WORK_GROUP_Y)) * DIM_LOCAL_WORK_GROUP_Y;
 
 	/* Start timer. */
-  //	polybench_start_instruments;
+	//	polybench_start_instruments;
 	size_t coalescingMax[2];
-  coalescingMax[0] = globalWorkSize[0] / localWorkSize[0];
-  coalescingMax[1] = globalWorkSize[1] / localWorkSize[1];
-  int iter = 10;	
+	coalescingMax[0] = globalWorkSize[0] / localWorkSize[0];
+	coalescingMax[1] = globalWorkSize[1] / localWorkSize[1];
+	int iter = 10;	
 
 
 	// Set the arguments of the kernel
@@ -203,19 +201,19 @@ void cl_launch_kernel(int ni, int nj)
 
 
 	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-    for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-      int coalescing[2];
-      coalescing[0] = cX;
-      coalescing[1] = cY;
-      errcode |= clSetKernelArg(clKernel, 4, sizeof(int), (void *)&cX);
-      errcode |= clSetKernelArg(clKernel, 5, sizeof(int), (void *)&cY);
-      if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
+		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+			int coalescing[2];
+			coalescing[0] = cX;
+			coalescing[1] = cY;
+			errcode |= clSetKernelArg(clKernel, 4, sizeof(int), (void *)&cX);
+			errcode |= clSetKernelArg(clKernel, 5, sizeof(int), (void *)&cY);
+			if(errcode != CL_SUCCESS) printf("Error in seting arguments\n");
 
-      size_t globalWorkSizeC[2];
-      globalWorkSizeC[0] = globalWorkSize[0] / cX;
-      globalWorkSizeC[1] = globalWorkSize[1] / cY;
+			size_t globalWorkSizeC[2];
+			globalWorkSizeC[0] = globalWorkSize[0] / cX;
+			globalWorkSizeC[1] = globalWorkSize[1] / cY;
 
-      polybench_start_instruments;
+			polybench_start_instruments;
 
 			// Execute the OpenCL kernel
 			for (int i = 0; i < iter; i++) {
@@ -225,17 +223,12 @@ void cl_launch_kernel(int ni, int nj)
 			if(errcode != CL_SUCCESS) printf("Error in launching kernel\n");
 
 			printf("Work group number %lu %lu, local work size %lu, %lu, GPU Time in seconds:\n", coalescingMax[0]/cX, coalescingMax[1]/cY, localWorkSize[0], localWorkSize[1]);
-        polybench_stop_instruments;
-        polybench_print_instruments;
+			polybench_stop_instruments;
+			polybench_print_instruments;
 
-    }
-  }
+		}
+	}
 
-
-	/* Stop and print timer. */
-	//printf("GPU Time in seconds:\n");
-  //	polybench_stop_instruments;
- 	//polybench_print_instruments;
 }
 
 void cl_clean_up()
@@ -283,10 +276,10 @@ void print_array(int ni, int nj,
   int i, j;
 
   for (i = 0; i < ni; i++)
-    for (j = 0; j < nj; j++) {
+	for (j = 0; j < nj; j++) {
 	fprintf (stderr, DATA_PRINTF_MODIFIER, B[i][j]);
 	if ((i * ni + j) % 20 == 0) fprintf (stderr, "\n");
-    }
+	}
   fprintf (stderr, "\n");
 }
 
@@ -298,8 +291,8 @@ int main(int argc, char *argv[])
 	int nj = NJ;
 
 	POLYBENCH_2D_ARRAY_DECL(A,DATA_TYPE,NI,NJ,ni,nj);
-  	POLYBENCH_2D_ARRAY_DECL(B,DATA_TYPE,NI,NJ,ni,nj);
-  	POLYBENCH_2D_ARRAY_DECL(B_outputFromGpu,DATA_TYPE,NI,NJ,ni,nj);
+	POLYBENCH_2D_ARRAY_DECL(B,DATA_TYPE,NI,NJ,ni,nj);
+	POLYBENCH_2D_ARRAY_DECL(B_outputFromGpu,DATA_TYPE,NI,NJ,ni,nj);
 
 	init(ni, nj, POLYBENCH_ARRAY(A));
 
@@ -316,14 +309,14 @@ int main(int argc, char *argv[])
 	#ifdef RUN_ON_CPU
 
 		/* Start timer. */
-  		polybench_start_instruments;
+		polybench_start_instruments;
 
 		conv2D(ni, nj, POLYBENCH_ARRAY(A), POLYBENCH_ARRAY(B));
 	
 		/* Stop and print timer. */
 		printf("CPU Time in seconds:\n");
-  		polybench_stop_instruments;
- 		polybench_print_instruments;
+		polybench_stop_instruments;
+		polybench_print_instruments;
 
 		compareResults(ni, nj, POLYBENCH_ARRAY(B), POLYBENCH_ARRAY(B_outputFromGpu));
 
@@ -340,7 +333,7 @@ int main(int argc, char *argv[])
 	POLYBENCH_FREE_ARRAY(B);
 	POLYBENCH_FREE_ARRAY(B_outputFromGpu);
 
-    	return 0;
+		return 0;
 }
 
 #include <polybench.c>

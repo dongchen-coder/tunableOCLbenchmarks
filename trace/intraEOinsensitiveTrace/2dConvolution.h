@@ -1,4 +1,3 @@
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -6,13 +5,13 @@
 #define NI 4096
 #define NJ 4096
 
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ
 
-void convolution2d_kernel_GXYW(float *A, float *B, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
+void convolution2d_kernel_GXYW(double *A, double *B, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
 	/* iterate over work group */
 	for (int wy = 0; wy < widy; wy++) {
@@ -29,7 +28,10 @@ void convolution2d_kernel_GXYW(float *A, float *B, int widx, int widy, int lidx,
 								int j = (wx * cX + x) * lidx + lx;
 								int i = (wy * cY + y) * lidy + ly;
 
-								float c11, c12, c13, c21, c22, c23, c31, c32, c33;
+								//printf("wx %d cX %d x %d lidx %d lx %d  ", wx, cX, x, lidx, lx);							
+								//printf("i %d j %d    ", i, j);
+
+								double c11, c12, c13, c21, c22, c23, c31, c32, c33;
 								c11 = +0.2;  c21 = +0.5;  c31 = -0.8;
 								c12 = -0.3;  c22 = +0.6;  c32 = -0.9;
 								c13 = +0.4;  c23 = +0.7;  c33 = +0.10;
@@ -55,6 +57,7 @@ void convolution2d_kernel_GXYW(float *A, float *B, int widx, int widy, int lidx,
 									(*access)(B_OFFSET + i * NJ + j, wy * widx + wx);
 								}
 							}
+							//printf("\n");
 						}
 					}
 				}
@@ -65,20 +68,20 @@ void convolution2d_kernel_GXYW(float *A, float *B, int widx, int widy, int lidx,
 	return;
 }
 
-void init_data(float * A) {
+void init_data(double * A) {
 
 	for (int i = 0; i < NI; ++i) {
 		for (int j = 0; j < NJ; ++j) {
-			A[i * NJ + j] = (float) (i * NJ + j);
+			A[i * NJ + j] = (double) (i * NJ + j);
 		}
 	}
 
 	return;
 }
 
-void convolution2d_cpu(float *A, float *B) {
+void convolution2d_cpu(double *A, double *B) {
 
-	float c11, c12, c13, c21, c22, c23, c31, c32, c33;
+	double c11, c12, c13, c21, c22, c23, c31, c32, c33;
 
 	c11 = +0.2;  c21 = +0.5;  c31 = -0.8;
 	c12 = -0.3;  c22 = +0.6;  c32 = -0.9;
@@ -102,11 +105,11 @@ void convolution2d_cpu(float *A, float *B) {
 	return;
 }
 
-void verify_kernel(float *B, float *B_ref) {
+void verify_kernel(double *B, double *B_ref) {
 
 	for (int i = 1; i < NI - 1; i++) {
 		for (int j = 1; j < NJ - 1; j++) {
-			if (B[i * NJ + j] != B_ref[i * NJ + j]) {
+			if ((B[i * NJ + j] - B_ref[i * NJ + j]) / B_ref[i * NJ + j] > 1.05) {
 				printf("Error in kernel, %d, %d, %f, %f\n", i, j, B[i * NJ + j], B_ref[i * NJ + j]);
 				return;
 			}
@@ -118,21 +121,21 @@ void verify_kernel(float *B, float *B_ref) {
 
 int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
 
-	float *A;
-	float *B;
-	float *B_ref;
+	double *A;
+	double *B;
+	double *B_ref;
 	
-	A = (float *) malloc(NI * NJ * sizeof(float));
-	B = (float *) malloc(NI * NJ * sizeof(float));
-	B_ref = (float *) malloc(NI * NJ * sizeof(float));
+	A = (double *) malloc(NI * NJ * sizeof(double));
+	B = (double *) malloc(NI * NJ * sizeof(double));
+	B_ref = (double *) malloc(NI * NJ * sizeof(double));
 
 	init_data(A);
 	convolution2d_cpu(A, B_ref);
 
 	int lidx = DIM_LOCAL_WORK_GROUP_X;
 	int lidy = DIM_LOCAL_WORK_GROUP_Y;
-	int gidx = (int)ceil(((float)NI) / ((float)lidx)) * lidx;
-	int gidy = (int)ceil(((float)NJ) / ((float)lidy)) * lidy;
+	int gidx = (int)ceil(((double)NJ) / ((double)lidx)) * lidx;
+	int gidy = (int)ceil(((double)NI) / ((double)lidy)) * lidy;
 	int coalescingMax[2];
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
@@ -143,8 +146,8 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			(*reset)();
 
 			int globalWorkSizeC[2];
-			globalWorkSizeC[0] = gidx / cX;
-			globalWorkSizeC[1] = gidy / cY;
+			globalWorkSizeC[0] = (gidx / lidx) / cX;
+			globalWorkSizeC[1] = (gidy / lidy) / cY;
 
 			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
 			convolution2d_kernel_GXYW(A, B, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
@@ -160,4 +163,3 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 
 	return 0;
 }
-

@@ -204,6 +204,8 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 
 			(*reset)();
 
+			init_data(A, x1, x2, y1, y2);
+
 			int globalWorkSizeC[2];
 			globalWorkSizeC[0] = (gidx / cX) / lidx;
 			globalWorkSizeC[1] = (gidy / cY) / lidy;

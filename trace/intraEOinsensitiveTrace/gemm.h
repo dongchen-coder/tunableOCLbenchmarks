@@ -143,7 +143,7 @@ int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;	
 
-			gemm_GXYW(A, B, C, alpha, beta, cX, cY, globalWorkSizeC[0]/lidx, globalWorkSizeC[1]/lidy, lidx, lidy, access);
+			gemm_GXYW(A, B, C, alpha, beta, cX, cY, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, access);
 			
 			(*calculate)();
 			

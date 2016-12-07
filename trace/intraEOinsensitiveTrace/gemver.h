@@ -71,6 +71,12 @@ void gemver_kernel2_GXYW(float beta, float *A, float *X, float *Y, float *Z, int
 
 						for (int x = 0; x < cX; x++) {
 							int i = (wx * cX + x) * lidx + lx;
+							
+							//if (i == 0) {
+							//	cout << "wy widy ly lidy " << wy << " " << widy << " " << ly << " " << lidy << endl;
+							//	cout << "wx cX x lidx lx " << wx << " "<< cX << " " << x << " " << lidx << " " << lx << endl;
+							//	cout << i << endl; 
+							//}
 
 							if (i < N) {
 								X[i] = 0;
@@ -284,7 +290,7 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 	lidx = DIM_LOCAL_WORK_GROUP_KERNEL_2_X;
 	lidy = DIM_LOCAL_WORK_GROUP_KERNEL_2_Y;
 	gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
-	gidy = (int)ceil(((float)N) / ((float)lidy)) * lidy;
+	gidy = 1;
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
@@ -298,6 +304,8 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
+			
+			//cout << cX << " " << cY << endl;
 
 			gemver_kernel2_GXYW(beta, A_ref, x, y, z, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
@@ -309,7 +317,7 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 	lidx = DIM_LOCAL_WORK_GROUP_KERNEL_3_X;
 	lidy = DIM_LOCAL_WORK_GROUP_KERNEL_3_Y;
 	gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
-	gidy = (int)ceil(((float)N) / ((float)lidy)) * lidy;
+	gidy = 1;
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 

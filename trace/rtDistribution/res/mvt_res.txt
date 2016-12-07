@@ -1,0 +1,63 @@
+Profiling reuse distribution for mvt
+global work size 256 1 local work size 16 1
+Intra vs Inter reuse count 32501760 1044480
+              distribution 0.968864 0.0311355
+global work size 128 1 local work size 16 1
+Intra vs Inter reuse count 33026048 520192
+              distribution 0.984493 0.0155067
+global work size 64 1 local work size 16 1
+Intra vs Inter reuse count 33288192 258048
+              distribution 0.992308 0.00769231
+global work size 32 1 local work size 16 1
+Intra vs Inter reuse count 33419264 126976
+              distribution 0.996215 0.0037851
+global work size 16 1 local work size 16 1
+Intra vs Inter reuse count 33484800 61440
+              distribution 0.998168 0.0018315
+global work size 8 1 local work size 16 1
+Intra vs Inter reuse count 33517568 28672
+              distribution 0.999145 0.000854701
+global work size 4 1 local work size 16 1
+Intra vs Inter reuse count 33533952 12288
+              distribution 0.999634 0.0003663
+global work size 2 1 local work size 16 1
+Intra vs Inter reuse count 33542144 4096
+              distribution 0.999878 0.0001221
+global work size 1 1 local work size 16 1
+Intra vs Inter reuse count 33546240 0
+              distribution 1 0
+global work size 256 1 local work size 16 1
+Intra vs Inter reuse count 32501760 1044480
+              distribution 0.968864 0.0311355
+global work size 128 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33026048 520192
+              distribution 0.984493 0.0155067
+global work size 64 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33288192 258048
+              distribution 0.992308 0.00769231
+global work size 32 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33419264 126976
+              distribution 0.996215 0.0037851
+global work size 16 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33484800 61440
+              distribution 0.998168 0.0018315
+global work size 8 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33517568 28672
+              distribution 0.999145 0.000854701
+global work size 4 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33533952 12288
+              distribution 0.999634 0.0003663
+global work size 2 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33542144 4096
+              distribution 0.999878 0.0001221
+global work size 1 1 local work size 16 1
+Error in kernel2
+Intra vs Inter reuse count 33546240 0
+              distribution 1 0

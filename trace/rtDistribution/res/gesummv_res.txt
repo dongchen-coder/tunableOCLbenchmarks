@@ -1,0 +1,28 @@
+Profiling reuse distribution for gesummv
+global work size 256 1 local work size 16 1
+Intra vs Inter reuse count 66076704 1052640
+              distribution 0.984319 0.0156808
+global work size 128 1 local work size 16 1
+Intra vs Inter reuse count 66601024 528320
+              distribution 0.99213 0.00787018
+global work size 64 1 local work size 16 1
+Intra vs Inter reuse count 66863232 266112
+              distribution 0.996036 0.00396417
+global work size 32 1 local work size 16 1
+Intra vs Inter reuse count 66994432 134912
+              distribution 0.99799 0.00200973
+global work size 16 1 local work size 16 1
+Intra vs Inter reuse count 67060224 69120
+              distribution 0.99897 0.00102965
+global work size 8 1 local work size 16 1
+Intra vs Inter reuse count 67093504 35840
+              distribution 0.999466 0.000533895
+global work size 4 1 local work size 16 1
+Intra vs Inter reuse count 67110912 18432
+              distribution 0.999725 0.000274574
+global work size 2 1 local work size 16 1
+Intra vs Inter reuse count 67121152 8192
+              distribution 0.999878 0.000122033
+global work size 1 1 local work size 16 1
+Intra vs Inter reuse count 67129344 0
+              distribution 1 0

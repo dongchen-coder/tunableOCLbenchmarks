@@ -3,8 +3,8 @@
 #include <iostream>
 using namespace std;
 
-#define M 32
-#define N 32
+#define M 2048
+#define N 2048
 
 #define FLOAT_N 3214212.01
 #define EPS 0.005
@@ -17,6 +17,11 @@ using namespace std;
 #define DIM_LOCAL_WORK_GROUP_KERNEL_3_Y 1
 #define DIM_LOCAL_WORK_GROUP_KERNEL_4_X 16
 #define DIM_LOCAL_WORK_GROUP_KERNEL_4_Y 1
+
+#define DATA_OFFSET 0
+#define MEAN_OFFSET M * N
+#define STDDEV_OFFSET M * N + M
+#define SYMMAT_OFFSET M * N + M + M
 
 void correlation_kernel1_GXYW(float *data, float *mean, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
@@ -35,11 +40,14 @@ void correlation_kernel1_GXYW(float *data, float *mean, int widx, int widy, int 
 
 							if (j < M) {
 								mean[j] = 0.0;
+								(*access)(MEAN_OFFSET + j, wy * widx + wx);
 								for (int i = 0; i < N; i++) {
 									mean[j] += data[i * M + j];
+									(*access)(DATA_OFFSET + i * M + j, wy * widx + wx);
+									(*access)(MEAN_OFFSET + j, wy * widx + wx);
 								}
-		
 								mean[j] /= (float)FLOAT_N;
+								(*access)(MEAN_OFFSET + j, wy * widx + wx);
 							}
 						}
 					}
@@ -68,14 +76,24 @@ void correlation_kernel2_GXYW(float *data, float *mean, float *stddev, int widx,
 
 							if (j < M) {
 								stddev[j] = 0.0;
-
+								(*access)(STDDEV_OFFSET + j, wy * widx + wx);
 								for (int i = 0; i < N; i++) {
 									stddev[j] += (data[i * M + j] - mean[j]) * (data[i * M + j] - mean[j]);
+									(*access)(DATA_OFFSET + i * M + j, wy * widx + wx);
+									(*access)(MEAN_OFFSET + j, wy * widx + wx);
+									(*access)(DATA_OFFSET + i * M + j, wy * widx + wx);
+									(*access)(MEAN_OFFSET + j, wy * widx + wx);
+									(*access)(STDDEV_OFFSET + j, wy * widx + wx);
 								}
 								stddev[j] /= FLOAT_N;
+								(*access)(STDDEV_OFFSET + j, wy * widx + wx);
 								stddev[j] =  sqrt(stddev[j]);
+								(*access)(STDDEV_OFFSET + j, wy * widx + wx);
+								(*access)(STDDEV_OFFSET + j, wy * widx + wx);
+								(*access)(STDDEV_OFFSET + j, wy * widx + wx);
 								if(stddev[j] <= EPS) {
 									stddev[j] = 1.0;
+									(*access)(STDDEV_OFFSET + j, wy * widx + wx);
 								}
 							}
 						}
@@ -108,6 +126,10 @@ void correlation_kernel3_GXYW(float *mean, float *stddev, float *data, int widx,
 								if ((i < N) && (j < M)) {
 									data[i * M + j] -= mean[j];
 									data[i * M + j] /= (sqrt(FLOAT_N) * stddev[j]);
+									(*access)(MEAN_OFFSET + j, wy * widx + wx);
+									(*access)(DATA_OFFSET + i * M + j, wy * widx + wx);
+									(*access)(STDDEV_OFFSET + j, wy * widx + wx);
+									(*access)(DATA_OFFSET + i * M + j, wy * widx + wx);
 								}
 							}
 						}
@@ -137,12 +159,17 @@ void correlation_kernel4_GXYW(float *data, float *symmat, int widx, int widy, in
 
 							if (j1 < (M-1)) {
 								symmat[j1 * M + j1] = 1.0;
-
+								(*access)(SYMMAT_OFFSET + j1 * M + j1, wy * widx + wx);
 								for (int j2 = (j1 + 1); j2 < M; j2++) {
 									for(int i = 0; i < N; i++) {
 										symmat[j1 * M + j2] += data[i * M + j1] * data[i * M + j2];
+										(*access)(DATA_OFFSET + i * M + j1, wy * widx + wx);
+										(*access)(DATA_OFFSET + i * M + j2, wy * widx + wx);
+										(*access)(SYMMAT_OFFSET + j1 * M + j2, wy * widx + wx);
 									}
 									symmat[j2 * M + j1] = symmat[j1 * M + j2];
+									(*access)(SYMMAT_OFFSET + j1 * M + j2, wy * widx + wx);
+									(*access)(SYMMAT_OFFSET + j2 * M + j1, wy * widx + wx);
 								}
 							}
 						}

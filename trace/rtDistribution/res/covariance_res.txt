@@ -1,0 +1,337 @@
+Profiling reuse distribution for covariance
+global work size 128 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 64 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 32 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 16 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 8 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 4 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 2 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 1 1 local work size 16 1
+Intra vs Inter reuse count 4196352 0
+              distribution 1 0
+global work size 128 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 128 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 128 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 128 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 128 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 128 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 128 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 128 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 128 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 128 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 128 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 128 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 64 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 64 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 64 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 64 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 64 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 64 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 64 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 64 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 64 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 64 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 64 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 64 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 32 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 32 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 32 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 32 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 32 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 32 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 32 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 32 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 32 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 32 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 32 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 32 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 16 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 16 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 16 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 16 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 16 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 16 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 16 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 16 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 16 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 16 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 16 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 16 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 8 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 8 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 8 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 8 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 8 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 8 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 8 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 8 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 8 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 8 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 8 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 8 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 4 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 4 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 4 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 4 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 4 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 4 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 4 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 4 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 4 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 4 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 4 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 4 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 2 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 2 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 2 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 2 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 2 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 2 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 2 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 2 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 2 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 2 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 2 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 2 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 1 2048 local work size 16 1
+Intra vs Inter reuse count 0 4192256
+              distribution 0 1
+global work size 1 1024 local work size 16 1
+Intra vs Inter reuse count 2097152 2095104
+              distribution 0.500244 0.499756
+global work size 1 512 local work size 16 1
+Intra vs Inter reuse count 3145728 1046528
+              distribution 0.750366 0.249634
+global work size 1 256 local work size 16 1
+Intra vs Inter reuse count 3670016 522240
+              distribution 0.875427 0.124573
+global work size 1 128 local work size 16 1
+Intra vs Inter reuse count 3932160 260096
+              distribution 0.937958 0.062042
+global work size 1 64 local work size 16 1
+Intra vs Inter reuse count 4063232 129024
+              distribution 0.969223 0.0307767
+global work size 1 32 local work size 16 1
+Intra vs Inter reuse count 4128768 63488
+              distribution 0.984856 0.0151441
+global work size 1 16 local work size 16 1
+Intra vs Inter reuse count 4161536 30720
+              distribution 0.992672 0.0073278
+global work size 1 8 local work size 16 1
+Intra vs Inter reuse count 4177920 14336
+              distribution 0.99658 0.00341964
+global work size 1 4 local work size 16 1
+Intra vs Inter reuse count 4186112 6144
+              distribution 0.998534 0.00146556
+global work size 1 2 local work size 16 1
+Intra vs Inter reuse count 4190208 2048
+              distribution 0.999511 0.00048852
+global work size 1 1 local work size 16 1
+Intra vs Inter reuse count 4192256 0
+              distribution 1 0
+global work size 128 1 local work size 16 1
+Intra vs Inter reuse count 12622760960 266338304
+              distribution 0.979336 0.0206638
+global work size 64 1 local work size 16 1
+Intra vs Inter reuse count 12756978688 132120576
+              distribution 0.989749 0.0102506
+global work size 32 1 local work size 16 1
+Intra vs Inter reuse count 12824087552 65011712
+              distribution 0.994956 0.00504393
+global work size 16 1 local work size 16 1
+Intra vs Inter reuse count 12857641984 31457280
+              distribution 0.997559 0.00244061
+global work size 8 1 local work size 16 1
+Intra vs Inter reuse count 12874419200 14680064
+              distribution 0.998861 0.00113895
+global work size 4 1 local work size 16 1
+Intra vs Inter reuse count 12882807808 6291456
+              distribution 0.999512 0.000488122
+global work size 2 1 local work size 16 1
+Intra vs Inter reuse count 12887002112 2097152
+              distribution 0.999837 0.000162707
+global work size 1 1 local work size 16 1
+Intra vs Inter reuse count 12889099264 0
+              distribution 1 0

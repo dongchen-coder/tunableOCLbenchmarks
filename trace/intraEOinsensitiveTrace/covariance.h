@@ -13,9 +13,9 @@ using namespace std;
 #define DIM_LOCAL_WORK_GROUP_KERNEL_3_X 16
 #define DIM_LOCAL_WORK_GROUP_KERNEL_3_Y 1
 
-#define DATA_OFFSET
-#define MEAN_OFFSET
-#define SYMMAT_OFFSET
+#define DATA_OFFSET 0
+#define MEAN_OFFSET M * N
+#define SYMMAT_OFFSET M * N + M
 
 void covariance_kernel1_GXYW(float *mean, float *data, float float_n, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 

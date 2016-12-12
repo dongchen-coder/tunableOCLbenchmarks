@@ -18,15 +18,20 @@ for i in [1, 2, 4, 8]:
 		f.close()
 		
 		f = open('3DConvolution.cl','w')
+		f_bk = open('./kernels/3DConvolution'+str(8/i)+'_'+str(32/j)+'.cl', 'w')
 		f.write(funcBegin)
+		f_bk.write(funcBegin)
 		for y in range(j):
 			for x in range(i):
 				f.write(index.replace(' x)',' '+str(x)+')').replace(' y)',' '+str(y)+')'))
 				f.write(code)
+				f_bk.write(index.replace(' x)',' '+str(x)+')').replace(' y)',' '+str(y)+')'))
+				f_bk.write(code)
 		f.write(funcEnd)
+		f_bk.write(funcEnd)
 		f.close()	
-		
-
+		f_bk.close()
+	
 		os.system('make')
 		os.system('./3DConvolution.exe')
 

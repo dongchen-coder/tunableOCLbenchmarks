@@ -147,10 +147,10 @@ void cl_load_prog()
 	if(errcode != CL_SUCCESS) printf("Error in creating program\n");
 
 	// Build the program
-	errcode = clBuildProgram(clProgram, 1, &device_id, NULL, NULL, NULL);
+	errcode = clBuildProgram(clProgram, 1, &device_id, "-cl-nv-verbose", NULL, NULL);
 	if(errcode != CL_SUCCESS) printf("Error in building program\n");
 	
-	if (errcode == CL_BUILD_PROGRAM_FAILURE) {
+	//if (errcode == CL_BUILD_PROGRAM_FAILURE) {
 		// Determine the size of the log
 		size_t log_size;
 		clGetProgramBuildInfo(clProgram, device_id, CL_PROGRAM_BUILD_LOG, 0, NULL, &log_size);
@@ -160,7 +160,7 @@ void cl_load_prog()
 		clGetProgramBuildInfo(clProgram, device_id, CL_PROGRAM_BUILD_LOG, log_size, log, NULL);
 		// Print the log
 		printf("%s\n", log);
-	}
+	//}
 	
 	// Create the OpenCL kernel
 	clKernel = clCreateKernel(clProgram, "Convolution3D_kernel", &errcode);
@@ -208,9 +208,9 @@ void cl_launch_kernel(int ni, int nj, int nk)
 			globalWorkSizeC[1] = globalWorkSize[1] / CY;
 
 			polybench_start_instruments;
-
-			for (int j = 0; j < iter; j++) {
-				for (int i = 1; i < NI - 1; ++i) {
+			int i, j;
+			for (j = 0; j < iter; j++) {
+				for (i = 1; i < NI - 1; ++i) {
 					// set the current value of 'i' for the argument in the kernel
 					errcode |= clSetKernelArg(clKernel, 5, sizeof(int), &i);
 					//errcode |= clSetKernelArg(clKernel, 6, sizeof(int), (void *)&cX);

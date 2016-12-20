@@ -1,0 +1,408 @@
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 25 registers, 352 bytes cmem[0]
+Work group number 8 32, local work size 32, 8, GPU Time in seconds:
+0.040119
+CPU Time in seconds:
+0.113403
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 28 registers, 352 bytes cmem[0]
+Work group number 8 16, local work size 32, 8, GPU Time in seconds:
+0.044683
+CPU Time in seconds:
+0.122086
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 30 registers, 352 bytes cmem[0]
+Work group number 8 8, local work size 32, 8, GPU Time in seconds:
+0.044633
+CPU Time in seconds:
+0.113609
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 31 registers, 352 bytes cmem[0]
+Work group number 8 4, local work size 32, 8, GPU Time in seconds:
+0.055285
+CPU Time in seconds:
+0.110189
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 31 registers, 352 bytes cmem[0]
+Work group number 8 2, local work size 32, 8, GPU Time in seconds:
+0.083929
+CPU Time in seconds:
+0.090923
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 31 registers, 352 bytes cmem[0]
+Work group number 8 1, local work size 32, 8, GPU Time in seconds:
+0.149604
+CPU Time in seconds:
+0.092007
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 30 registers, 352 bytes cmem[0]
+Work group number 4 32, local work size 32, 8, GPU Time in seconds:
+0.044785
+CPU Time in seconds:
+0.093424
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 33 registers, 352 bytes cmem[0]
+Work group number 4 16, local work size 32, 8, GPU Time in seconds:
+0.045111
+CPU Time in seconds:
+0.092802
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 38 registers, 352 bytes cmem[0]
+Work group number 4 8, local work size 32, 8, GPU Time in seconds:
+0.055329
+CPU Time in seconds:
+0.091447
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 38 registers, 352 bytes cmem[0]
+Work group number 4 4, local work size 32, 8, GPU Time in seconds:
+0.088006
+CPU Time in seconds:
+0.091854
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 38 registers, 352 bytes cmem[0]
+Work group number 4 2, local work size 32, 8, GPU Time in seconds:
+0.150454
+CPU Time in seconds:
+0.087377
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 38 registers, 352 bytes cmem[0]
+Work group number 4 1, local work size 32, 8, GPU Time in seconds:
+0.284702
+CPU Time in seconds:
+0.103994
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 37 registers, 352 bytes cmem[0]
+Work group number 2 32, local work size 32, 8, GPU Time in seconds:
+0.044893
+CPU Time in seconds:
+0.091485
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 40 registers, 352 bytes cmem[0]
+Work group number 2 16, local work size 32, 8, GPU Time in seconds:
+0.055367
+CPU Time in seconds:
+0.118276
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 46 registers, 352 bytes cmem[0]
+Work group number 2 8, local work size 32, 8, GPU Time in seconds:
+0.091838
+CPU Time in seconds:
+0.091354
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 47 registers, 352 bytes cmem[0]
+Work group number 2 4, local work size 32, 8, GPU Time in seconds:
+0.165478
+CPU Time in seconds:
+0.091542
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 47 registers, 352 bytes cmem[0]
+Work group number 2 2, local work size 32, 8, GPU Time in seconds:
+0.308353
+CPU Time in seconds:
+0.091400
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 47 registers, 352 bytes cmem[0]
+Work group number 2 1, local work size 32, 8, GPU Time in seconds:
+0.600945
+CPU Time in seconds:
+0.087099
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 32 registers, 352 bytes cmem[0]
+Work group number 1 32, local work size 32, 8, GPU Time in seconds:
+0.056783
+CPU Time in seconds:
+0.091910
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 56 registers, 352 bytes cmem[0]
+Work group number 1 16, local work size 32, 8, GPU Time in seconds:
+0.090039
+CPU Time in seconds:
+0.119434
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 57 registers, 352 bytes cmem[0]
+Work group number 1 8, local work size 32, 8, GPU Time in seconds:
+0.164415
+CPU Time in seconds:
+0.091532
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 74 registers, 352 bytes cmem[0]
+Work group number 1 4, local work size 32, 8, GPU Time in seconds:
+0.318115
+CPU Time in seconds:
+0.091387
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 72 registers, 352 bytes cmem[0]
+Work group number 1 2, local work size 32, 8, GPU Time in seconds:
+0.578377
+CPU Time in seconds:
+0.087228
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0
+gcc -O3 -I/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/inc -I../../OpenCL/utilities -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/OpenCL/common/lib -L/home/zhaopeng/dongchen/NVIDIA_GPU_Computing_SDK/shared/lib -lOpenCL -lm 3DConvolution.c -o 3DConvolution.exe
+number of platforms is 1
+platform name is NVIDIA CUDA
+platform version is OpenCL 1.2 CUDA 7.5.18
+number of devices is 2
+device name is Tesla K40m
+
+ptxas info    : 0 bytes gmem
+ptxas info    : Compiling entry function 'Convolution3D_kernel' for 'sm_35'
+ptxas info    : Function properties for Convolution3D_kernel
+ptxas         .     0 bytes stack frame, 0 bytes spill stores, 0 bytes spill loads
+ptxas info    : Used 72 registers, 352 bytes cmem[0]
+Work group number 1 1, local work size 32, 8, GPU Time in seconds:
+1.126107
+CPU Time in seconds:
+0.087002
+Non-Matching CPU-GPU Outputs Beyond Error Threshold of 1.05 Percent: 0

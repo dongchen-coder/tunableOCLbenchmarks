@@ -24,17 +24,17 @@ wgx wgy reg actThreadsPerMP actWarpsPerMP actThreadBlockPerMP Occupancy
 1   2   72  768             24            3                   38%
 1   1   72  768             24            3                   38%
 
-Threads per Warp	                        32
-Max Warps per Multiprocessor	            64
-Max Thread Blocks per Multiprocessor	    16
-Max Threads per Multiprocessor	          2048
-Maximum Thread Block Size	                1024
-Registers per Multiprocessor	            65536
-Max Registers per Thread Block	          65536
-Max Registers per Thread	                255
-Shared Memory per Multiprocessor (bytes)	49152
-Max Shared Memory per Block	              49152
-Register allocation unit size	            256
-Register allocation granularity	          warp
-Shared Memory allocation unit size	      256
-Warp allocation granularity	              4
+Threads per Warp                          32
+Max Warps per Multiprocessor              64
+Max Thread Blocks per Multiprocessor      16
+Max Threads per Multiprocessor            2048
+Maximum Thread Block Size                 1024
+Registers per Multiprocessor              65536
+Max Registers per Thread Block            65536
+Max Registers per Thread                  255
+Shared Memory per Multiprocessor (bytes)  49152
+Max Shared Memory per Block               49152
+Register allocation unit size             256
+Register allocation granularity           warp
+Shared Memory allocation unit size        256
+Warp allocation granularity               4

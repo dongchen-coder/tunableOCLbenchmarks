@@ -1,25 +1,40 @@
 wgx wgy reg actThreadsPerMP actWarpsPerMP actThreadBlockPerMP Occupancy
-8 32 25 2048 64 8 100%
-8 16 28 2048 64 8 100%
-8 8 30 2048 64 8 100%
-8 4 31 2048 64 8 100%
-8 2 31 2048 64 8 100%
-8 1 31 2048 64 8 100%
-4 32 30 2048 64 8 100%
-4 16 33 1536 48 6 75%
-4 8 38 1536 48 6 75%
-4 4 38 1536 48 6 75%
-4 2 38 1536 48 6 75%
-4 1 38 1536 48 6 75%
-2 32 37 1536 48 6 75%
-2 16 40 1536 48 6 75%
-2 8 46 1280 40 5 63%
-2 4 47 1280 40 5 63%
-2 2 47 1280 40 5 63%
-2 1 47 1280 40 5 63%
-1 32 32 2048 64 8 100%
-1 16 56 1024 32 4 50%
-1 8 57 1024 32 4 50%
-1 4 74 768 24 3 38%
-1 2 72 768 24 3 38%
-1 1 72 768 24 3 38%
+8   32  25  2048            64            8                   100%
+8   16  28  2048            64            8                   100%
+8   8   30  2048            64            8                   100%
+8   4   31  2048            64            8                   100%
+8   2   31  2048            64            8                   100%
+8   1   31  2048            64            8                   100%
+4   32  30  2048            64            8                   100%
+4   16  33  1536            48            6                   75%
+4   8   38  1536            48            6                   75%
+4   4   38  1536            48            6                   75%
+4   2   38  1536            48            6                   75%
+4   1   38  1536            48            6                   75%
+2   32  37  1536            48            6                   75%
+2   16  40  1536            48            6                   75%
+2   8   46  1280            40            5                   63%
+2   4   47  1280            40            5                   63%
+2   2   47  1280            40            5                   63%
+2   1   47  1280            40            5                   63%
+1   32  32  2048            64            8                   100%
+1   16  56  1024            32            4                   50%
+1   8   57  1024            32            4                   50%
+1   4   74  768             24            3                   38%
+1   2   72  768             24            3                   38%
+1   1   72  768             24            3                   38%
+
+Threads per Warp	                        32
+Max Warps per Multiprocessor	            64
+Max Thread Blocks per Multiprocessor	    16
+Max Threads per Multiprocessor	          2048
+Maximum Thread Block Size	                1024
+Registers per Multiprocessor	            65536
+Max Registers per Thread Block	          65536
+Max Registers per Thread	                255
+Shared Memory per Multiprocessor (bytes)	49152
+Max Shared Memory per Block	              49152
+Register allocation unit size	            256
+Register allocation granularity	          warp
+Shared Memory allocation unit size	      256
+Warp allocation granularity	              4

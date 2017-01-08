@@ -18,6 +18,28 @@ unsigned long ref_time = 0;
 //std::map<uint64_t, double> nfactorial;
 uint64_t N = 0;
 
+//#define ADDRESS_SAMPLING 
+//#define SAMPLING_RATE 100000
+
+//void address_sampling() {
+
+//	std::set<uint64_t> tmp;
+//	int i = 0;
+//	for (std::set<uint64_t>::iterator it = D.begin(), eit = D.end(); it != eit; ++it) {
+//		i++;
+//		if (i == SAMPLING_RATE) {
+//			i = 1;
+//			tmp.insert(*it);
+//		}
+//	}
+
+//	D.clear();
+//	D = tmp;
+
+//	return;
+//}
+
+
 void access(uint64_t addr, uint64_t wgid) {
 
 	ref_time++;		
@@ -85,10 +107,16 @@ void aeol() {
 	std::map<uint64_t, uint64_t> aveL;
 
 	/* finilize exit time calculation for the last work group */
+	cout << "Start to finilize" << endl;
 	for (std::map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
-    	e[N-1][it->first] = ref_time - it->second + 1;
-    }	
+		e[N-1][it->first] = ref_time - it->second + 1;
+	}
 	L[N-1] = ref_time;
+
+//#ifdef ADDRESS_SAMPLING
+	/* Address Sampling */
+//	address_sampling();
+//#endif
 
 	/* init D, F, E, M*/
 	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
@@ -96,7 +124,7 @@ void aeol() {
 		M[*it] = 0;
 		aveL[*it] = 0;		
 
-		//cout << "N " << N << endl; 
+		cout << "d " << *it <<  " N " << N << endl; 
 		for (int i = 0; i < N; i++) {
 			if (f[i].find(*it) == f[i].end()) {
 				aveL[*it] += L[i];
@@ -108,7 +136,7 @@ void aeol() {
 			aveL[*it] = double(aveL[*it]) / M[*it];
 		}
 
-		//cout << *it << " avel " << aveL[*it] << " m " << M[*it] << endl;
+		cout << "start F" << endl;
 
 		F[*it] = new std::vector<uint64_t>();
 		for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
@@ -116,6 +144,8 @@ void aeol() {
 				F[*it]->push_back(fit->second[*it]);
 			}
 		}
+
+		cout << "start E" << endl;
 
 		E[*it] = new std::vector<uint64_t>();
 		for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
@@ -129,7 +159,7 @@ void aeol() {
 	/* alg 2 */	
 
 	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
-		//cout << "d " << *it << endl;
+		cout << "d " << *it << endl;
 		for (std::vector<uint64_t>::iterator fit = F[*it]->begin(), efit = F[*it]->end(); fit != efit; ++fit) {
 			//cout << "f " << *fit << " ";
 			for (std::vector<uint64_t>::iterator eit = E[*it]->begin(), eeit = E[*it]->end(); eit != eeit; ++eit) {

@@ -86,8 +86,8 @@ void aeol() {
 
 	/* finilize exit time calculation for the last work group */
 	for (std::map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
-    	e[N-1][it->first] = ref_time - it->second + 1;
-    }	
+		e[N-1][it->first] = ref_time - it->second + 1;
+	}
 	L[N-1] = ref_time;
 
 	/* init D, F, E, M*/

@@ -27,13 +27,13 @@ std::map<uint64_t, uint64_t> aveL;
 
 /* processed data for alg 3 */
 uint64_t cid = 0;
-std::map<uint64_t, std::map<uint64_t, uint64_t> > CF;
-std::map<uint64_t, std::map<uint64_t, uint64_t> > CE;
+std::map<std::string, uint64_t> CID;
+std::map<uint64_t, std::map<uint64_t, uint64_t> > CEF;
 std::map<uint64_t, uint64_t> CM;
 std::map<uint64_t, uint64_t> CaveL;
 
 
-//#define CLASSIFICATION
+#define CLASSIFICATION
 
 //#define ADDRESS_SAMPLING 
 #define SAMPLING_RATE 100000
@@ -118,25 +118,21 @@ double averagedCount(int n, int m, int i) {
 
 void init_aeol() {
 	/* finilize exit time calculation for the last work group */
-    cout << "Start to finilize" << endl;
-    for (std::map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
-        e[N-1][it->first] = ref_time - it->second + 1;
-    }
-    L[N-1] = ref_time;
+	cout << "Start to finilize" << endl;
+	for (std::map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
+		e[N-1][it->first] = ref_time - it->second + 1;
+	}
+	L[N-1] = ref_time;
 
 #ifdef ADDRESS_SAMPLING
-    /* Address Sampling */
+	/* Address Sampling */
 	address_sampling();
 #endif
 	
 #ifdef CLASSIFICATION
 
-	//const int cLength = 1024;
-	//std::map<std::bitset<cLength>, uint64_t> CID;
-	std::map<std::string, uint64_t> CID;
 
 	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
-		//std::bitset<cLength> tmp(0);
 		std::string tmp = "";
 		for (int i = 0; i < N; i++) {
 			if (f[i].find(*it)  == f[i].end()) {
@@ -146,10 +142,8 @@ void init_aeol() {
 			}
 		}
 		
-		//C.insert(tmp);	
 		if (CID.find(tmp) == CID.end()) {
 			CID[tmp] = cid;
-			//CM[cid] = N - tmp.count();
 			CM[cid] = N;
 			for (int i = 0; i < N; i++) {
 				if (tmp[i] == '1') {
@@ -159,79 +153,76 @@ void init_aeol() {
 			CaveL[cid] = 0;
 			for (int i = 0; i < N; i++) {
 				if (tmp[i] == '0') {
-                    CaveL[cid] += L[i];
-                }
+					CaveL[cid] += L[i];
+				}
 			}
 			if (CM[cid] != 0) {
-                CaveL[cid] = double(CaveL[cid]) / CM[cid];
-            }
-			//CF[cid] = new std::map<uint64_t, uint64_t>;
-			//CE[cid] = new std::map<uint64_t, uint64_t>;
+				CaveL[cid] = double(CaveL[cid]) / CM[cid];
+			}
 			cid++;
 		}	
-		
+	
+		uint64_t id = CID[tmp];	
 		for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
-			if (fit->second.find(*it) != fit->second.end()) {
-				uint64_t id = CID[tmp];
-				uint64_t rtTmp = fit->second[*it];
-				if (CF[id].find(rtTmp) != CF[id].end()) {
-					CF[id][rtTmp] ++;
+			for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
+				if (fit->first == eit->first) {
+					continue;
+				}
+				if (fit->second.find(*it) == fit->second.end()) {
+					continue;
+				}
+				if (eit->second.find(*it) == eit->second.end()) {
+					continue;
+				}
+				uint64_t rtTmp = fit->second[*it] + eit->second[*it];
+				if (CEF[id].find(rtTmp) != CEF[id].end()) {
+					CEF[id][rtTmp] ++;
 				} else {
-					CF[id][rtTmp] = 1;
+					cout << rtTmp << endl;
+					CEF[id][rtTmp] = 1;
 				}
 			}
 		}
-		
-		for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
-			if (eit->second.find(*it) != eit->second.end()) {
-				uint64_t id = CID[tmp];
-				if (CE[id].find(eit->second[*it]) != CE[id].end()) {
-					CE[id][eit->second[*it]] ++;
-				} else {
-					CE[id][eit->second[*it]] = 1;
-				}
-			}
-		}		
 	}
 
 #else
 	/* init D, F, E, M*/
-    for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
+	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
 
-        M[*it] = 0;
-        aveL[*it] = 0;
+		M[*it] = 0;
+		aveL[*it] = 0;
 
-        cout << "d " << *it <<  " N " << N << endl;
-        for (int i = 0; i < N; i++) {
-            if (f[i].find(*it) == f[i].end()) {
-                aveL[*it] += L[i];
-                M[*it]++;
-            }
-        }
+		cout << "d " << *it <<  " N " << N << endl;
+		for (int i = 0; i < N; i++) {
+			if (f[i].find(*it) == f[i].end()) {
+				aveL[*it] += L[i];
+				M[*it]++;
+			}
+		}
 
-        if (M[*it] != 0) {
-            aveL[*it] = double(aveL[*it]) / M[*it];
-        }
+		if (M[*it] != 0) {
+			aveL[*it] = double(aveL[*it]) / M[*it];
+		}
 
-        //cout << "start F" << endl;
+		//cout << "start F" << endl;
 
-        F[*it] = new std::vector<uint64_t>();
-        for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
-            if (fit->second.find(*it) != fit->second.end()) {
-                F[*it]->push_back(fit->second[*it]);
-            }
-        }
+		F[*it] = new std::vector<uint64_t>();
+		for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
+			if (fit->second.find(*it) != fit->second.end()) {
+				F[*it]->push_back(fit->second[*it]);
+			}
+		}
 
-        //cout << "start E" << endl;
+		//cout << "start E" << endl;
 
-        E[*it] = new std::vector<uint64_t>();
-        for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
-            //cout << eit->first << " " << endl;
-            if (eit->second.find(*it) != eit->second.end()) {
-                E[*it]->push_back(eit->second[*it]);
-            }
-        }
-    }
+		E[*it] = new std::vector<uint64_t>();
+		for (std::map<uint64_t, std::map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
+			//cout << eit->first << " " << endl;
+			if (eit->second.find(*it) != eit->second.end()) {
+				E[*it]->push_back(eit->second[*it]);
+			}
+		}
+	}
 #endif
 
 	return;
@@ -239,33 +230,33 @@ void init_aeol() {
 
 void alg2() {
 	/* alg 2 */
-    for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
-        //cout << "d " << *it << endl;
-        for (std::vector<uint64_t>::iterator fit = F[*it]->begin(), efit = F[*it]->end(); fit != efit; ++fit) {
-            //cout << "f " << *fit << " ";
-            for (std::vector<uint64_t>::iterator eit = E[*it]->begin(), eeit = E[*it]->end(); eit != eeit; ++eit) {
-                //cout << "e " << *eit << " ";
-                for (int i = 0; i <= M[*it]; i++) {
-                    //cout << "m " << i << " avel " << aveL[*it] << " ";
-                    uint64_t tmpRT = *eit + aveL[*it] * i + *fit - 1;
-                    //cout << "rt " << tmpRT << endl;
-                    if (interRT.find(tmpRT) != interRT.end()) {
-                        interRT[tmpRT] += averagedCount(N, M[*it], i);
-                    } else {
-                        interRT[tmpRT] = averagedCount(N, M[*it], i);
-                    }
-                }
-            }
-        }
-        for (int j = 0; j < N; j++) {
-            if (f[j].find(*it) != f[j].end()) {
-                for (int i = 0; i <= M[*it]; i++) {
-                    uint64_t tmpRT = e[j][*it] + aveL[*it] * i + f[j][*it] - 1;
-                    interRT[tmpRT] -= averagedCount(N, M[*it], i);
-                }
-            }
-        }
-    }
+	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
+		//cout << "d " << *it << endl;
+		for (std::vector<uint64_t>::iterator fit = F[*it]->begin(), efit = F[*it]->end(); fit != efit; ++fit) {
+			//cout << "f " << *fit << " ";
+			for (std::vector<uint64_t>::iterator eit = E[*it]->begin(), eeit = E[*it]->end(); eit != eeit; ++eit) {
+				//cout << "e " << *eit << " ";
+				for (int i = 0; i <= M[*it]; i++) {
+					//cout << "m " << i << " avel " << aveL[*it] << " ";
+					uint64_t tmpRT = *eit + aveL[*it] * i + *fit - 1;
+					//cout << "rt " << tmpRT << endl;
+					if (interRT.find(tmpRT) != interRT.end()) {
+					    interRT[tmpRT] += averagedCount(N, M[*it], i);
+					} else {
+					    interRT[tmpRT] = averagedCount(N, M[*it], i);
+					}
+				}
+			}
+		}
+		for (int j = 0; j < N; j++) {
+			if (f[j].find(*it) != f[j].end()) {
+				for (int i = 0; i <= M[*it]; i++) {
+					uint64_t tmpRT = e[j][*it] + aveL[*it] * i + f[j][*it] - 1;
+					interRT[tmpRT] -= averagedCount(N, M[*it], i);
+				}
+			}
+		}
+	}
 	return;	
 }
 
@@ -274,30 +265,29 @@ void alg3() {
 
 	//for (std::set<std::bitset<N>>::iterator it = C.begin(), endit = C.end(); it != endit; ++it) {
 	for (uint64_t c = 0; c < cid; c++) {
-		for (std::map<uint64_t, uint64_t>::iterator fit = CF[c].begin(), efit = CF[c].end(); fit != efit; ++fit) {
-			for (std::map<uint64_t, uint64_t>::iterator eit = CE[c].begin(), eeit = CE[c].end(); eit != eeit; ++eit) {
-				for (int i = 0; i <= CM[c]; i++) {
-					uint64_t tmpRT = fit->first + CaveL[c] * i + eit->first - 1;
-					if (interRT.find(tmpRT) != interRT.end()) {
-						interRT[tmpRT] += averagedCount(N, CM[c], i) * fit->second * eit->second;
-					} else {
-						interRT[tmpRT] = averagedCount(N, CM[c], i)  * fit->second * eit->second;
-					}
+		for (std::map<uint64_t, uint64_t>::iterator cefit = CEF[c].begin(), ecefit = CEF[c].end(); cefit != ecefit; ++cefit) {
+			for (int i = 0; i <= CM[c]; i++) {
+				uint64_t tmpRT = cefit->first + CaveL[c] * i - 1;
+				if (interRT.find(tmpRT) != interRT.end()) {
+					interRT[tmpRT] += averagedCount(N, CM[c], i) * cefit->second;
+				} else {
+					interRT[tmpRT] = averagedCount(N, CM[c], i)  * cefit->second;
 				}
 			}
 		}
-	}	
+	}
+/*	
 	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
 		for (int j = 0; j < N; j++) {
-            if (f[j].find(*it) != f[j].end()) {
-                for (int i = 0; i <= M[*it]; i++) {
-                    uint64_t tmpRT = e[j][*it] + aveL[*it] * i + f[j][*it] - 1;
-                    interRT[tmpRT] -= averagedCount(N, M[*it], i);
-                }
-            }
-        }		
+			if (f[j].find(*it) != f[j].end()) {
+				for (int i = 0; i <= M[*it]; i++) {
+					uint64_t tmpRT = e[j][*it] + aveL[*it] * i + f[j][*it] - 1;
+					interRT[tmpRT] -= averagedCount(N, M[*it], i);
+				}
+			}
+		}		
 	}
-
+*/
 	return;
 }
 
@@ -313,7 +303,6 @@ void aeol() {
 
 	return;
 }
-
 
 void dumpInterRT() {
 	for (std::map<uint64_t, double>::iterator it = interRT.begin(), eit = interRT.end(); it != eit; ++it) {
@@ -357,4 +346,13 @@ void dumpL() {
 		cout << " work group " << it->first << " l " << it->second << endl; 
 	}		
 	return;
+}
+
+void dumpC() {
+	cout << "Total number of classes " << cid << endl;
+	for (std::map<std::string, uint64_t>::iterator it = CID.begin(), eit = CID.end(); it != eit; ++it) {
+		cout << it-> first << endl;
+	}
+	return;
 }	
+

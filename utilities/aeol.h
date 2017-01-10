@@ -56,6 +56,24 @@ void address_sampling() {
 	return;
 }
 
+#define THRESHOLD 8
+#define BLOCK_NUM 256
+
+inline uint64_t valueToBin(uint64_t value) {
+    if (value < ((uint64_t)1 << THRESHOLD)) {
+        return value;
+    } else {
+        uint64_t base;
+        for (int i = THRESHOLD+1; i < 64; i++) {
+            if (value < ((uint64_t)1 << i)) {
+                base = ((uint64_t)1 << (i-1));
+                return base + (value - base) / (base / BLOCK_NUM) * (base / BLOCK_NUM);
+            }
+        }
+        base = ((uint64_t)1 << 63);
+        return base + (value - base) / (base / BLOCK_NUM) * (base / BLOCK_NUM);
+    }
+}
 
 void access(uint64_t addr, uint64_t wgid) {
 
@@ -131,7 +149,6 @@ void init_aeol() {
 	
 #ifdef CLASSIFICATION
 
-
 	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
 		std::string tmp = "";
 		for (int i = 0; i < N; i++) {
@@ -174,7 +191,7 @@ void init_aeol() {
 				if (eit->second.find(*it) == eit->second.end()) {
 					continue;
 				}
-				uint64_t rtTmp = fit->second[*it] + eit->second[*it];
+				uint64_t rtTmp = valueToBin(fit->second[*it] + eit->second[*it]);
 				if (CEF[id].find(rtTmp) != CEF[id].end()) {
 					CEF[id][rtTmp] ++;
 				} else {

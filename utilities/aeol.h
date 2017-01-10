@@ -178,7 +178,7 @@ void init_aeol() {
 				if (CEF[id].find(rtTmp) != CEF[id].end()) {
 					CEF[id][rtTmp] ++;
 				} else {
-					cout << rtTmp << endl;
+					//cout << rtTmp << endl;
 					CEF[id][rtTmp] = 1;
 				}
 			}
@@ -192,7 +192,7 @@ void init_aeol() {
 		M[*it] = 0;
 		aveL[*it] = 0;
 
-		cout << "d " << *it <<  " N " << N << endl;
+		//cout << "d " << *it <<  " N " << N << endl;
 		for (int i = 0; i < N; i++) {
 			if (f[i].find(*it) == f[i].end()) {
 				aveL[*it] += L[i];

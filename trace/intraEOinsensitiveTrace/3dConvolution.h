@@ -13,6 +13,162 @@ using namespace std;
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ * NK
 
+#define SP_NUM 4
+
+#define ORDER for (int sp = 0; sp < sp_bound; sp++) { \
+                int wx = p_wx * SP_NUM + sp; \
+                /* iterate over work item*/ \
+                for (int ly = 0; ly < lidy; ly++) { \
+                    for (int lx = 0; lx < lidx; lx++) { \
+                        for (int y = 0; y < cY; y++) { \
+                            for (int x = 0; x < cX; x++) { \
+                                int k = (wx * cX + x) * lidx + lx; \
+                                int j = (wy * cY + y) * lidy + ly;
+
+#define ORDEREND }}}}}
+
+void convolution3d_kernel_GXYW_RR(float *A, float *B, int i, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
+	
+	float c11, c12, c13, c21, c22, c23, c31, c32, c33;
+    c11 = +2;  c21 = +5;  c31 = -8;
+    c12 = -3;  c22 = +6;  c32 = -9;
+    c13 = +4;  c23 = +7;  c33 = +10;
+
+	/* iterate over work group */
+	for (int wy = 0; wy < widy; wy++) {
+
+		int p_wx_bound = widx/SP_NUM;
+		if (p_wx_bound == 0) {
+			p_wx_bound = 1;
+		}
+		for (int p_wx = 0; p_wx < p_wx_bound; p_wx++) {
+			int sp_bound = SP_NUM;
+			if (p_wx_bound == 1) {
+				sp_bound = widx;
+			}
+			for (int sp = 0; sp < sp_bound; sp++) {
+				int wx = p_wx * SP_NUM + sp; 
+				/* iterate over work item*/
+				for (int ly = 0; ly < lidy; ly++) {
+					for (int lx = 0; lx < lidx; lx++) {
+						for (int y = 0; y < cY; y++) {
+                            for (int x = 0; x < cX; x++) {
+	
+								int k = (wx * cX + x) * lidx + lx;
+								int j = (wy * cY + y) * lidy + ly;
+
+								if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+                                    B[i*(NK * NJ) + j*NK + k] = c11 * A[(i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]
+                                            +   c13 * A[(i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]
+                                            +   c21 * A[(i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]
+                                            +   c23 * A[(i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]
+                                            +   c31 * A[(i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]
+                                            +   c33 * A[(i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]
+                                            +   c12 * A[(i + 0)*(NK * NJ) + (j - 1)*NK + (k + 0)]
+                                            +   c22 * A[(i + 0)*(NK * NJ) + (j + 0)*NK + (k + 0)]
+                                            +   c32 * A[(i + 0)*(NK * NJ) + (j + 1)*NK + (k + 0)]
+                                            +   c11 * A[(i - 1)*(NK * NJ) + (j - 1)*NK + (k + 1)]
+                                            +   c13 * A[(i + 1)*(NK * NJ) + (j - 1)*NK + (k + 1)]
+                                            +   c21 * A[(i - 1)*(NK * NJ) + (j + 0)*NK + (k + 1)]
+                                            +   c23 * A[(i + 1)*(NK * NJ) + (j + 0)*NK + (k + 1)]
+                                            +   c31 * A[(i - 1)*(NK * NJ) + (j + 1)*NK + (k + 1)]
+                                            +   c33 * A[(i + 1)*(NK * NJ) + (j + 1)*NK + (k + 1)];
+								} else {
+                               		B[i*(NK * NJ) + j*NK + k] = 0;
+								}
+							}
+						}
+					}
+				}
+			}
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+				(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+			}
+			ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+			}
+			ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j - 1)*NK + (k + 0), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j + 0)*NK + (k + 0), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j + 1)*NK + (k + 0), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k + 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k + 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j + 0)*NK + (k + 1), wy * widx + wx);
+			} 
+            ORDEREND
+			ORDER
+			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j + 0)*NK + (k + 1), wy * widx + wx);
+			}
+            ORDEREND
+			ORDER 
+            if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j + 1)*NK + (k + 1), wy * widx + wx);
+			}
+			ORDEREND
+			ORDER 
+ 			if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j + 1)*NK + (k + 1), wy * widx + wx);
+			}
+			ORDEREND	
+			ORDER
+            if ((i < (NI - 1)) && (j < (NJ - 1)) &&  (k < (NK - 1)) && (i > 0) && (j > 0) && (k > 0)) {
+            	(*access)(B_OFFSET + i * (NK * NJ) + j * NK + k, wy * widx + wx);
+			} else {
+				(*access)(B_OFFSET + i * (NK * NJ) + j * NK + k, wy * widx + wx);
+			}
+            ORDEREND
+		}
+	}
+
+	return;
+}
+
 void convolution3d_kernel_GXYW(float *A, float *B, int i, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
 	/* iterate over work group */
@@ -55,18 +211,18 @@ void convolution3d_kernel_GXYW(float *A, float *B, int i, int widx, int widy, in
 									(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
 									(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
 									(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j - 1)*NK + (k + 0), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j + 0)*NK + (k + 0), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j + 1)*NK + (k + 0), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k + 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k + 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j + 0)*NK + (k + 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j + 0)*NK + (k + 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j + 1)*NK + (k + 1), wy * widx + wx);
-                                    (*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j + 1)*NK + (k + 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j - 1)*NK + (k + 0), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j + 0)*NK + (k + 0), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 0)*(NK * NJ) + (j + 1)*NK + (k + 0), wy * widx + wx);
+									(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j - 1)*NK + (k + 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j - 1)*NK + (k + 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j + 0)*NK + (k + 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j + 0)*NK + (k + 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i - 1)*(NK * NJ) + (j + 1)*NK + (k + 1), wy * widx + wx);
+									(*access)(A_OFFSET + (i + 1)*(NK * NJ) + (j + 1)*NK + (k + 1), wy * widx + wx);
 									(*access)(B_OFFSET + i * (NK * NJ) + j * NK + k, wy * widx + wx);
 								} else {
 									B[i*(NK * NJ) + j*NK + k] = 0;
@@ -135,7 +291,13 @@ void verify_kernel(float *B, float *B_ref) {
 	for (int i = 1; i < NI - 1; i++) {
 		for (int j = 1; j < NJ - 1; j++) {
 			for (int k = 1; k < NK - 1; k++) {
+				/*
 				if ((B[i * NJ * NK + j * NK + k] - B_ref[i * NJ * NK + j * NK + k]) / B_ref[i * NJ * NK + j * NK + k] > 1.05) {
+					cout << "Error in kernel" << endl;
+					return;
+				}
+				*/
+				if (B[i * NJ * NK + j * NK + k] != B_ref[i * NJ * NK + j * NK + k]) {
 					cout << "Error in kernel" << endl;
 					return;
 				}
@@ -146,7 +308,7 @@ void verify_kernel(float *B, float *B_ref) {
 	return;
 }
 
-int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void)) {
 
 	float *A;
 	float *B;
@@ -178,13 +340,14 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			for (int i = 1; i < NI - 1; i++) {
-				convolution3d_kernel_GXYW(A, B, i, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
+				cout << i << endl;
+				convolution3d_kernel_GXYW_RR(A, B, i, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 			}
 
 			verify_kernel(B, B_ref);
 	
 			(*calculate)();
-
+			(*dump)();
 		}
 	}
 

@@ -149,8 +149,8 @@ void convolution3DCuda(int ni, int nj, int nk, DATA_TYPE POLYBENCH_3D(A, NI, NJ,
 	cudaMemcpy(B_gpu, B, sizeof(DATA_TYPE) * NI * NJ * NK, cudaMemcpyHostToDevice);
 	
 	dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
-	dim3 grid((size_t)(ceil( ((float)NK) / ((float)block.x) )), (size_t)(ceil( ((float)NJ) / ((float)block.y) )));
-	
+	dim3 grid((size_t)(ceil( ((float)NK) / ((float)block.x)) / CX), (size_t)(ceil( ((float)NJ) / ((float)block.y))) / CY );
+
 	/* Start timer. */
   	polybench_start_instruments;
 

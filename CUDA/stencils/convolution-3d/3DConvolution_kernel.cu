@@ -2,6 +2,9 @@
 #include <polybench.h>
 #include <polybenchUtilFuncts.h>
 
+#define CX 1
+#define CY 1
+
 __global__ void convolution3D_kernel(int ni, int nj, int nk, DATA_TYPE* A, DATA_TYPE* B, int i)
 {   
     int k = blockIdx.x * blockDim.x + threadIdx.x;

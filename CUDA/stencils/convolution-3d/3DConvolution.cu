@@ -20,6 +20,7 @@
 #define POLYBENCH_TIME 1
 
 #include "3DConvolution.cuh"
+#include "3DConvolution_kernel.cu"
 #include <polybench.h>
 #include <polybenchUtilFuncts.h>
 
@@ -110,7 +111,7 @@ void GPU_argv_init()
 	cudaSetDevice( GPU_DEVICE );
 }
 
-
+/*
 __global__ void convolution3D_kernel(int ni, int nj, int nk, DATA_TYPE* A, DATA_TYPE* B, int i)
 {
 	int k = blockIdx.x * blockDim.x + threadIdx.x;
@@ -135,7 +136,7 @@ __global__ void convolution3D_kernel(int ni, int nj, int nk, DATA_TYPE* A, DATA_
 					     +   c33 * A[(i + 1)*(NK * NJ) + (j + 1)*NK + (k + 1)];
 	}
 }
-
+*/
 
 void convolution3DCuda(int ni, int nj, int nk, DATA_TYPE POLYBENCH_3D(A, NI, NJ, NK, ni, nj, nk), DATA_TYPE POLYBENCH_3D(B, NI, NJ, NK, ni, nj, nk), DATA_TYPE POLYBENCH_3D(B_outputFromGpu, NI, NJ, NK, ni, nj, nk))
 {
@@ -173,9 +174,8 @@ void convolution3DCuda(int ni, int nj, int nk, DATA_TYPE POLYBENCH_3D(A, NI, NJ,
 
 /* DCE code. Must scan the entire live-out data.
    Can be used also to check the correctness of the output. */
-static
-void print_array(int ni, int nj, int nk,
-		 DATA_TYPE POLYBENCH_3D(B,NI,NJ,NK,ni,nj,nk))
+static void print_array(int ni, int nj, int nk,
+ 		 DATA_TYPE POLYBENCH_3D(B,NI,NJ,NK,ni,nj,nk))
 {
   int i, j, k;
 

@@ -1,3 +1,6 @@
+#include "3DConvolution.cuh"
+#include <polybench.h>
+#include <polybenchUtilFuncts.h>
 
 __global__ void convolution3D_kernel(int ni, int nj, int nk, DATA_TYPE* A, DATA_TYPE* B, int i)
 {   

@@ -47,4 +47,6 @@ for i in [1, 2, 4, 8]:
 		f.close()
 
 		os.system('make')
-		os.system('./3DConvolution.exe')
+		conf = str(8/i) + "_" + str(32/j) + "_res.txt"
+		os.system('rm ' + conf)
+		os.system('nvprof --log-file ' + conf + ' --events all --metrics all ./3DConvolution.exe')

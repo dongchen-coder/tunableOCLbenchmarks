@@ -150,7 +150,8 @@ void convolution3DCuda(int ni, int nj, int nk, DATA_TYPE POLYBENCH_3D(A, NI, NJ,
 	
 	dim3 block(DIM_THREAD_BLOCK_X, DIM_THREAD_BLOCK_Y);
 	dim3 grid((size_t)(ceil( ((float)NK) / ((float)block.x)) / CX), (size_t)(ceil( ((float)NJ) / ((float)block.y))) / CY );
-
+	
+	printf("%d, %d, %d, %d\n", (size_t)(ceil( ((float)NK) / ((float)block.x)) / CX), (size_t)(ceil( ((float)NJ) / ((float)block.y))) / CY, CX, CY);
 	/* Start timer. */
   	polybench_start_instruments;
 

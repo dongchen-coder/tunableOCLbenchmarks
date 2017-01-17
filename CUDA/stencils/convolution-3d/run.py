@@ -1,8 +1,8 @@
 import sys
 import os
 
-Inc = "#include \"3DConvolution.cuh\"\n \
-#include <polybench.h>\n \
+Inc = "#include \"3DConvolution.cuh\"\n\
+#include <polybench.h>\n\
 #include <polybenchUtilFuncts.h>\n"
 
 funcBegin = "__global__ void convolution3D_kernel(int ni, int nj, int nk, DATA_TYPE* A, DATA_TYPE* B, int i)\n \
@@ -10,7 +10,8 @@ funcBegin = "__global__ void convolution3D_kernel(int ni, int nj, int nk, DATA_T
 DATA_TYPE c11, c12, c13, c21, c22, c23, c31, c32, c33;\n \
 	c11 = +2;  c21 = +5;  c31 = -8; \n \
 	c12 = -3;  c22 = +6;  c32 = -9; \n \
-	c13 = +4;  c23 = +7;  c33 = +10; \n"
+	c13 = +4;  c23 = +7;  c33 = +10; \n \
+int k, j;\n"
 
 funcBody = "if ((i < (_PB_NI-1)) && (j < (_PB_NJ-1)) &&  (k < (_PB_NK-1)) && (i > 0) && (j > 0) && (k > 0)) \n\
 	{ \n \
@@ -26,17 +27,19 @@ funcBody = "if ((i < (_PB_NI-1)) && (j < (_PB_NJ-1)) &&  (k < (_PB_NK-1)) && (i 
 
 funcEnd = "}"
 
-index = "int k = (blockIdx.x * CX + x) * blockDim.x + threadIdx.x; \n \
-		int j = (blockIdx.y * CY + y) * blockDim.y + threadIdx.y;\n"
+index = "k = (blockIdx.x * CX + x) * blockDim.x + threadIdx.x; \n \
+	j = (blockIdx.y * CY + y) * blockDim.y + threadIdx.y;\n"
 
 for i in [1, 2, 4, 8]:
 	for j in [1, 2, 4, 8, 16, 32]:
 
-		f = open('3DConvolution_kernel_test.cu','w')
+		f = open('3DConvolution_kernel.cu','w')
 		f.write(Inc)
 		str1 = "#define CX " + str(i) + "\n"
 		str1 += "#define CY " + str(j) + "\n"
 		f.write(str1)
+
+		f.write(funcBegin)
 
 		for y in range(j):
 			for x in range(i):
@@ -50,3 +53,4 @@ for i in [1, 2, 4, 8]:
 		conf = str(8/i) + "_" + str(32/j) + "_res.txt"
 		os.system('rm ' + conf)
 		os.system('nvprof --log-file ' + conf + ' --events all --metrics all ./3DConvolution.exe')
+		os.system('./3DConvolution.exe')

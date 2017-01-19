@@ -30,8 +30,13 @@ funcEnd = "}"
 index = "k = (blockIdx.x * CX + x) * blockDim.x + threadIdx.x; \n \
 	j = (blockIdx.y * CY + y) * blockDim.y + threadIdx.y;\n"
 
-for i in [1, 2, 4, 8]:
-	for j in [1, 2, 4, 8, 16, 32]:
+#256
+#for i in [1, 2, 4, 8]:
+#	for j in [1, 2, 4, 8, 16, 32]:
+
+#2048
+for i in [1, 2, 4, 8, 16, 32, 64]:
+	for j in [1, 2, 4, 8, 16, 32, 64, 128, 256]:
 
 		f = open('3DConvolution_kernel.cu','w')
 		f.write(Inc)
@@ -50,7 +55,7 @@ for i in [1, 2, 4, 8]:
 		f.close()
 
 		os.system('make')
-		conf = str(8/i) + "_" + str(32/j) + "_res.txt"
+		conf = str(64/i) + "_" + str(256/j) + "_res.txt"
 		os.system('rm ' + conf)
 		os.system('nvprof --log-file ' + conf + ' --events all --metrics all ./3DConvolution.exe')
-		os.system('./3DConvolution.exe')
+		#os.system('./3DConvolution.exe')

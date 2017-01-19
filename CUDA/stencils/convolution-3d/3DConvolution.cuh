@@ -11,8 +11,10 @@
 #ifndef THREEDCONV_H
 # define THREEDCONV_H
 
+#define XXL_DATASET
+
 /* Default to STANDARD_DATASET. */
-# if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET)
+# if !defined(MINI_DATASET) && !defined(SMALL_DATASET) && !defined(LARGE_DATASET) && !defined(EXTRALARGE_DATASET) && !defined(XXL_DATASET)
 #  define STANDARD_DATASET
 # endif
 
@@ -48,6 +50,13 @@
 #define NJ 512
 #define NK 512
 #  endif
+
+#ifdef XXL_DATASET
+#define NI 32
+#define NJ 2048
+#define NK 2048
+#endif
+
 # endif /* !N */
 
 # define _PB_NI POLYBENCH_LOOP_BOUND(NI,ni)

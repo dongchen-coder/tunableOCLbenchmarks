@@ -13,6 +13,12 @@ DATA_TYPE c11, c12, c13, c21, c22, c23, c31, c32, c33;\n \
 	c13 = +4;  c23 = +7;  c33 = +10; \n \
 int k, j;\n"
 
+smid = "__device__ uint get_smid(void) { \n\
+     uint ret;\n\
+     asm(\"mov.u32 %0, %smid;\" : \"=r\"(ret) );\n\
+     return ret;\n\
+}\n"
+
 funcBody = "if ((i < (_PB_NI-1)) && (j < (_PB_NJ-1)) &&  (k < (_PB_NK-1)) && (i > 0) && (j > 0) && (k > 0)) \n\
 	{ \n \
 		B[i*(NK * NJ) + j*NK + k] = c11 * A[(i - 1)*(NK * NJ) + (j - 1)*NK + (k - 1)]  +  c13 * A[(i + 1)*(NK * NJ) + (j - 1)*NK + (k - 1)] \n\
@@ -43,6 +49,8 @@ for i in [1, 2, 4, 8, 16, 32, 64]:
 		str1 = "#define CX " + str(i) + "\n"
 		str1 += "#define CY " + str(j) + "\n"
 		f.write(str1)
+			
+		f.write(smid)
 
 		f.write(funcBegin)
 
@@ -51,11 +59,14 @@ for i in [1, 2, 4, 8, 16, 32, 64]:
 				f.write(index.replace(' x)',' '+str(x)+')').replace(' y)',' '+str(y)+')'))
 				f.write(funcBody)
 
+		f.write("smids[(blockIdx.y * blockDimx + blockIdx.x) * threadDim.x * threadDim.y + threadIdx.y * threadDim.x + threadIdx.x] = get_smid();")
+
 		f.write(funcEnd)
 		f.close()
 
 		os.system('make')
 		conf = str(64/i) + "_" + str(256/j) + "_res.txt"
 		os.system('rm ' + conf)
-		os.system('nvprof --log-file ' + conf + ' --events all --metrics all ./3DConvolution.exe')
+		#os.system('nvprof --log-file ' + conf + ' --events all --metrics all ./3DConvolution.exe')
+		os.system('nvprof --log-file ' + conf + ' --metrics l2_l1_read_hit_rate,achieved_occupancy ./3DConvolution.exe')
 		#os.system('./3DConvolution.exe')

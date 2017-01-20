@@ -1,0 +1,10 @@
+==8176== NVPROF is profiling process 8176, command: ./3DConvolution.exe
+==8176== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==8176== Profiling application: ./3DConvolution.exe
+==8176== Profiling result:
+==8176== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K40m (0)"
+	Kernel: convolution3D_kernel(int, int, int, float*, float*, int)
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      71.85%      71.92%      71.87%
+         30                        achieved_occupancy                        Achieved Occupancy    0.944112    0.946669    0.945376

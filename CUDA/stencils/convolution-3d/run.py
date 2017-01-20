@@ -1,5 +1,6 @@
 import sys
 import os
+import random
 
 Inc = "#include \"3DConvolution.cuh\"\n\
 #include <polybench.h>\n\
@@ -36,37 +37,55 @@ funcEnd = "}"
 index = "k = (blockIdx.x * CX + x) * blockDim.x + threadIdx.x; \n \
 	j = (blockIdx.y * CY + y) * blockDim.y + threadIdx.y;\n"
 
+mappedIndex = "k = (xmapping[blockIdx.x] * CX + x) * blockDim.x + threadIdx.x; \n \
+    j = (ymapping[blockIdx.y] * CY + y) * blockDim.y + threadIdx.y;\n"
+
 #256
 #for i in [1, 2, 4, 8]:
 #	for j in [1, 2, 4, 8, 16, 32]:
 
 #2048
+
 for i in [1, 2, 4, 8, 16, 32, 64]:
 	for j in [1, 2, 4, 8, 16, 32, 64, 128, 256]:
+
+
+		xmapping = range(i);
+		ymapping = range(j);
+		random.shuffle(xmapping)
+		random.shuffle(ymapping)
+	
 
 		f = open('3DConvolution_kernel.cu','w')
 		f.write(Inc)
 		str1 = "#define CX " + str(i) + "\n"
 		str1 += "#define CY " + str(j) + "\n"
 		f.write(str1)
-			
-		f.write(smid)
+	
+
+		print xmapping
+		print ','.join(map(str, xmapping))
+		f.write('int xmapping['+str(i)+'] = {'+','.join(map(str, xmapping)) + '}\n')		
+		f.write('int ymapping['+str(j)+'] = {'+','.join(map(str, ymapping)) + '}\n')
+
+		#f.write(smid)
 
 		f.write(funcBegin)
 
 		for y in range(j):
 			for x in range(i):
-				f.write(index.replace(' x)',' '+str(x)+')').replace(' y)',' '+str(y)+')'))
+				#f.write(index.replace(' x)',' '+str(x)+')').replace(' y)',' '+str(y)+')'))
+				f.write(mappedIndex.replace(' x)',' '+str(x)+')').replace(' y)',' '+str(y)+')'))
 				f.write(funcBody)
 
-		f.write("smids[(blockIdx.y * blockDimx + blockIdx.x) * threadDim.x * threadDim.y + threadIdx.y * threadDim.x + threadIdx.x] = get_smid();")
+		#f.write("smids[(blockIdx.y * blockDimx + blockIdx.x) * threadDim.x * threadDim.y + threadIdx.y * threadDim.x + threadIdx.x] = get_smid();")
 
 		f.write(funcEnd)
 		f.close()
 
-		os.system('make')
-		conf = str(64/i) + "_" + str(256/j) + "_res.txt"
-		os.system('rm ' + conf)
+		#os.system('make')
+		#conf = str(64/i) + "_" + str(256/j) + "_res.txt"
+		#os.system('rm ' + conf)
 		#os.system('nvprof --log-file ' + conf + ' --events all --metrics all ./3DConvolution.exe')
-		os.system('nvprof --log-file ' + conf + ' --metrics l2_l1_read_hit_rate,achieved_occupancy ./3DConvolution.exe')
+		#os.system('nvprof --log-file ' + conf + ' --metrics l2_l1_read_hit_rate,achieved_occupancy ./3DConvolution.exe')
 		#os.system('./3DConvolution.exe')

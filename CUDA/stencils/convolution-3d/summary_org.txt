@@ -1,0 +1,5 @@
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      77.21%      77.24%      77.23%
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      77.20%      77.24%      77.22%
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      77.21%      77.24%      77.22%
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      77.21%      77.25%      77.23%
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      77.22%      77.24%      77.23%

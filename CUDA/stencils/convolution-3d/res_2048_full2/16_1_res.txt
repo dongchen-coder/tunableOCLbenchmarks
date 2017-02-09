@@ -1,0 +1,10 @@
+==8618== NVPROF is profiling process 8618, command: ./3DConvolution.exe
+==8618== Some kernel(s) will be replayed on device 0 in order to collect all events/metrics.
+==8618== Profiling application: ./3DConvolution.exe
+==8618== Profiling result:
+==8618== Metric result:
+Invocations                               Metric Name                        Metric Description         Min         Max         Avg
+Device "Tesla K40m (0)"
+	Kernel: convolution3D_kernel(int, int, int, float*, float*, int)
+         30                       l2_l1_read_hit_rate                    L2 Hit Rate (L1 Reads)      76.80%      76.81%      76.80%
+         30                        achieved_occupancy                        Achieved Occupancy    0.133209    0.133240    0.133223

@@ -3,12 +3,12 @@
 #include <iostream>
 using namespace std;
 
-#define NI 256
-#define NJ 256
-#define NK 256
+#define NI 3
+#define NJ 2048
+#define NK 2048
 
-#define DIM_LOCAL_WORK_GROUP_X 16
-#define DIM_LOCAL_WORK_GROUP_Y 1
+#define DIM_LOCAL_WORK_GROUP_X 32
+#define DIM_LOCAL_WORK_GROUP_Y 8
 
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ * NK
@@ -329,8 +329,10 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+	//for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
+	//	for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+	int cX = 1;
+	int cY = 1;
 
 			(*reset)();
 
@@ -341,15 +343,15 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 			for (int i = 1; i < NI - 1; i++) {
 				cout << i << endl;
-				convolution3d_kernel_GXYW_RR(A, B, i, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
+				convolution3d_kernel_GXYW(A, B, i, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 			}
 
 			verify_kernel(B, B_ref);
 	
 			(*calculate)();
 			(*dump)();
-		}
-	}
+	//	}
+	//}
 
 	return 0;
 }

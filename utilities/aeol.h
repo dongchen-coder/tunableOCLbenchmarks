@@ -245,39 +245,46 @@ void init_aeol() {
 #ifdef CLASSIFICATION
 
 	cout << "Start to classify" << endl;
-	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
-		
-		//cout << *it << endl;
+	
+	#pragma omp parallel for
+	for (int index = 0; index < D.size(); ++index) {
+		//uint64_t it = D[index];
+		std::set<uint64_t>::iterator D_iter = std::next(D.begin(), index);
+		uint64_t it = *D_iter;
+		cout << index << " " << it << endl;
 
 		std::string tmp = "";
 		for (int i = 0; i < N; i++) {
-			if (f[i].find(*it)  == f[i].end()) {
+			if (f[i].find(it)  == f[i].end()) {
 				tmp.push_back('0');
 			} else {
 				tmp.push_back('1');
 			}
 		}
 		
-		if (CID.find(tmp) == CID.end()) {
-			CID[tmp] = cid;
-			CM[cid] = N;
-			for (int i = 0; i < N; i++) {
-				if (tmp[i] == '1') {
-					CM[cid]--;
+		#pragma omp critical
+		{
+			if (CID.find(tmp) == CID.end()) {
+				CID[tmp] = cid;
+				CM[cid] = N;
+				for (int i = 0; i < N; i++) {
+					if (tmp[i] == '1') {
+						CM[cid]--;
+					}
 				}
-			}
-			CaveL[cid] = 0;
-			for (int i = 0; i < N; i++) {
-				if (tmp[i] == '0') {
-					CaveL[cid] += L[i];
+				CaveL[cid] = 0;
+				for (int i = 0; i < N; i++) {
+					if (tmp[i] == '0') {
+						CaveL[cid] += L[i];
+					}
 				}
-			}
-			if (CM[cid] != 0) {
-				CaveL[cid] = double(CaveL[cid]) / CM[cid];
-			}
-			cid++;
+				if (CM[cid] != 0) {
+					CaveL[cid] = double(CaveL[cid]) / CM[cid];
+				}
+				cid++;
+			}	
 		}	
-	
+
 		uint64_t id = CID[tmp];	
 		//cout << id << endl;
 		for (std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
@@ -285,25 +292,30 @@ void init_aeol() {
 				if (fit->first == eit->first) {
 					continue;
 				}
-				if (fit->second.find(*it) == fit->second.end()) {
+				if (fit->second.find(it) == fit->second.end()) {
 					continue;
 				}
-				if (eit->second.find(*it) == eit->second.end()) {
+				if (eit->second.find(it) == eit->second.end()) {
 					continue;
 				}
 				//uint64_t rtTmp = valueToBin(fit->second[*it] + eit->second[*it]);
-				uint64_t rtTmp = fit->second[*it] + eit->second[*it];
-				if (CEF[id].find(rtTmp) != CEF[id].end()) {
-					CEF[id][rtTmp] ++;
-				} else {
-					//cout << rtTmp << endl;
-					CEF[id][rtTmp] = 1;
+				uint64_t rtTmp = fit->second[it] + eit->second[it];
+				#pragma omp critical
+				{
+					if (CEF[id].find(rtTmp) != CEF[id].end()) {
+						CEF[id][rtTmp] ++;
+					} else {
+						//cout << rtTmp << endl;
+						CEF[id][rtTmp] = 1;
+					}
 				}
 			}
 		}
-
-		fRT_cal(*it, CaveL[id], CM[id]);
-		eRT_cal(*it, CaveL[id], CM[id]);
+		#pragma omp critical
+		{
+			fRT_cal(it, CaveL[id], CM[id]);
+			eRT_cal(it, CaveL[id], CM[id]);
+		}
 	}
 	cout << "End classify" << endl;
 

@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <bitset>
+#include <omp.h>
 using namespace std;
 
 /* raw data */
@@ -246,12 +247,13 @@ void init_aeol() {
 
 	cout << "Start to classify" << endl;
 	
+	omp_set_num_threads(48);
 	#pragma omp parallel for
 	for (int index = 0; index < D.size(); ++index) {
 		//uint64_t it = D[index];
 		std::set<uint64_t>::iterator D_iter = std::next(D.begin(), index);
 		uint64_t it = *D_iter;
-		cout << index << " " << it << endl;
+		//cout << index << " " << it << endl;
 
 		std::string tmp = "";
 		for (int i = 0; i < N; i++) {

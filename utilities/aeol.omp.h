@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <bitset>
+#include <omp.h>
 using namespace std;
 
 /* raw data */
@@ -28,8 +29,9 @@ std::unordered_map<uint64_t, uint64_t> M;
 std::unordered_map<uint64_t, uint64_t> aveL;
 
 /* processed data for alg 3 */
+#define MAX_NUM_WORKGROUP 16384
 uint64_t cid = 0;
-std::unordered_map<std::string, uint64_t> CID;
+std::unordered_map<std::bitset<MAX_NUM_WORKGROUP>, uint64_t> CID;
 std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> > CEF;
 std::unordered_map<uint64_t, uint64_t> CM;
 std::unordered_map<uint64_t, uint64_t> CaveL;
@@ -171,7 +173,7 @@ double averagedCount(int n, int m, int i) {
 	return res / (n-i);
 }
 
-double averagedFCount(int n, int m, int i) {
+inline double averagedFCount(int n, int m, int i) {
 
 	double res = 1;
 	for (int j = 0; j < i; j++) {
@@ -180,7 +182,7 @@ double averagedFCount(int n, int m, int i) {
 	return res / (n-i);
 }
 
-void fRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
+inline void fRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 
 	for (std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
 		if (fit->second.find(addr) != fit->second.end()) {
@@ -198,7 +200,7 @@ void fRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 	return;
 }
 
-double averagedECount(int n, int m, int i) {
+inline double averagedECount(int n, int m, int i) {
 	
 	double res = 1;
     for (int j = 0; j < i; j++) {
@@ -207,7 +209,7 @@ double averagedECount(int n, int m, int i) {
     return res / (n-i);
 }
 
-void eRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
+inline void eRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 	
 	for (std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
 		if (eit->second.find(addr) != eit->second.end()) {
@@ -245,66 +247,144 @@ void init_aeol() {
 #ifdef CLASSIFICATION
 
 	cout << "Start to classify" << endl;
-	for (std::set<uint64_t>::iterator it = D.begin(), endit = D.end(); it != endit; ++it) {
-		
-		//cout << *it << endl;
+	std::unordered_map<uint64_t, uint64_t> DtoC;
 
-		std::string tmp = "";
+
+	omp_set_num_threads(48);
+	#pragma omp parallel for
+	for (int index = 0; index < D.size(); ++index) {
+		//uint64_t it = D[index];
+		std::set<uint64_t>::iterator D_iter = std::next(D.begin(), index);
+		uint64_t it = *D_iter;
+		//cout << index << " " << it << endl;
+
+		std::bitset<MAX_NUM_WORKGROUP> tmp;
+		tmp.reset();
 		for (int i = 0; i < N; i++) {
-			if (f[i].find(*it)  == f[i].end()) {
-				tmp.push_back('0');
+			if (f[i].find(it)  == f[i].end()) {
+				//tmp.push_back('0');
+				tmp.set(i, 0);
 			} else {
-				tmp.push_back('1');
+				//tmp.push_back('1');
+				tmp.set(i, 1);
 			}
 		}
 		
-		if (CID.find(tmp) == CID.end()) {
-			CID[tmp] = cid;
-			CM[cid] = N;
-			for (int i = 0; i < N; i++) {
-				if (tmp[i] == '1') {
-					CM[cid]--;
+		#pragma omp critical
+		{
+			if (CID.find(tmp) == CID.end()) {
+				CID[tmp] = cid;
+				CM[cid] = N;
+				for (int i = 0; i < N; i++) {
+					if (tmp.test(i)) {
+						CM[cid]--;
+					}
 				}
-			}
-			CaveL[cid] = 0;
-			for (int i = 0; i < N; i++) {
-				if (tmp[i] == '0') {
-					CaveL[cid] += L[i];
+				CaveL[cid] = 0;
+				for (int i = 0; i < N; i++) {
+					if (!tmp.test(i)) {
+						CaveL[cid] += L[i];
+					}
 				}
+				if (CM[cid] != 0) {
+					CaveL[cid] = double(CaveL[cid]) / CM[cid];
+				}
+				cid++;
 			}
-			if (CM[cid] != 0) {
-				CaveL[cid] = double(CaveL[cid]) / CM[cid];
-			}
-			cid++;
+			DtoC[it] = CID[tmp];
 		}	
+	}
+	//for (auto DtoC_iter = DtoC.begin(), DtoC_end = DtoC.end(); DtoC_iter != DtoC_end; ++DtoC_iter) {
+	//	cout << DtoC_iter->second << " ";
+	//}
+	cout << "Finished classification, number of classes " << CID.size() << endl;
 	
-		uint64_t id = CID[tmp];	
-		//cout << id << endl;
+
+	cout << "Start to calculate class F, E " << endl;
+	//std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> > DEF;
+	std::vector< std::unordered_map<uint64_t, uint64_t>* > DEF(D.size());
+	#pragma omp parallel for 
+    for (int index = 0; index < D.size(); ++index) {
+        //uint64_t it = D[index];
+        std::set<uint64_t>::iterator D_iter = std::next(D.begin(), index);
+        uint64_t it = *D_iter;
+		std::unordered_map<uint64_t, uint64_t>* histoTmp = new std::unordered_map<uint64_t, uint64_t>();
+		//uint64_t id = DtoC[it];
 		for (std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> >::iterator fit = f.begin(), efit = f.end(); fit != efit; ++ fit) {
+		//#pragma omp parallel for
+		//for (int f_index = 0; f_index < f.size(); f_index++) {
+		//	std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> >::iterator fit = std::next(f.begin(), f_index);
+
 			for (std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> >::iterator eit = e.begin(), eeit = e.end(); eit != eeit; ++ eit) {
 				if (fit->first == eit->first) {
 					continue;
 				}
-				if (fit->second.find(*it) == fit->second.end()) {
+				if (fit->second.find(it) == fit->second.end()) {
 					continue;
 				}
-				if (eit->second.find(*it) == eit->second.end()) {
+				if (eit->second.find(it) == eit->second.end()) {
 					continue;
 				}
 				//uint64_t rtTmp = valueToBin(fit->second[*it] + eit->second[*it]);
-				uint64_t rtTmp = fit->second[*it] + eit->second[*it];
-				if (CEF[id].find(rtTmp) != CEF[id].end()) {
-					CEF[id][rtTmp] ++;
-				} else {
-					//cout << rtTmp << endl;
-					CEF[id][rtTmp] = 1;
-				}
+				uint64_t rtTmp = fit->second[it] + eit->second[it];
+				//#pragma omp critical
+				//{
+					if (histoTmp->find(rtTmp) != histoTmp->end()) {
+						(*histoTmp)[rtTmp] ++;
+					} else {
+						//cout << rtTmp << endl;
+						(*histoTmp)[rtTmp] = 1;
+					}
+				//}
+				//#pragma omp critical
 			}
 		}
-
-		fRT_cal(*it, CaveL[id], CM[id]);
-		eRT_cal(*it, CaveL[id], CM[id]);
+		//cout << "Here" << endl;
+		DEF[it] = histoTmp;
+		//cout << "Here 1" << endl;
 	}
+	cout << "Finished the half" << endl;
+	//for (auto CEF_iter = CEF[0].begin(), CEF_end = CEF[0].end(); CEF_iter != CEF_end; ++ CEF_iter) {
+	//	cout << CEF_iter->first << " " << CEF_iter->second << endl;
+	//}
+	//for (auto DEF_iter = DEF.begin(), DEF_end = DEF.end(); DEF_iter != DEF_end; ++DEF_iter) {
+		//auto DEFHisto = DEF_iter->second;
+		//uint64_t id = DtoC[DEF_iter->first];
+	for (int index = 0; index < D.size(); ++index) {
+		std::set<uint64_t>::iterator D_iter = std::next(D.begin(), index);
+        uint64_t it = *D_iter;	
+		uint64_t id = DtoC[it];
+		auto DEFHisto = DEF[it];
+		for (auto EF_iter = DEFHisto->begin(), EF_end = DEFHisto->end(); EF_iter != EF_end; ++EF_iter) {
+			uint64_t drtTmp = EF_iter->first;
+			if (CEF[id].find(drtTmp) != CEF[id].end()) {
+				CEF[id][drtTmp] += EF_iter->second;
+			} else {
+				CEF[id][drtTmp] = EF_iter->second;
+			}
+		}
+	}
+	cout << "Finished EF" << endl;
+
+	cout << "Start fRT, eRT" << endl;
+	#pragma omp parallel for
+	for (int index = 0; index < D.size(); ++index) {
+        //uint64_t it = D[index];
+        std::set<uint64_t>::iterator D_iter = std::next(D.begin(), index);
+        uint64_t it = *D_iter;
+        uint64_t id = DtoC[it];
+
+		#pragma omp critical
+		{
+			cout << it << " " << CaveL[id] << " " << CM[id] << endl;
+			fRT_cal(it, CaveL[id], CM[id]);
+			eRT_cal(it, CaveL[id], CM[id]);
+		}
+	}
+	//for (auto fRT_iter = fRT.begin(), fRT_end = fRT.end(); fRT_iter != fRT_end; ++fRT_iter) {
+	//	cout << fRT_iter->first <<  " " << fRT_iter->second << endl;
+	//}
+
 	cout << "End classify" << endl;
 
 #else
@@ -655,7 +735,7 @@ void dumpL() {
 
 void dumpC() {
 	cout << "Total number of classes " << cid << endl;
-	for (std::unordered_map<std::string, uint64_t>::iterator it = CID.begin(), eit = CID.end(); it != eit; ++it) {
+	for (std::unordered_map<std::bitset<MAX_NUM_WORKGROUP>, uint64_t>::iterator it = CID.begin(), eit = CID.end(); it != eit; ++it) {
 		cout << it-> first << endl;
 	}
 	return;

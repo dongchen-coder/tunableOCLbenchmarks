@@ -1,10 +1,11 @@
 #include <stdlib.h>
 #include <iostream>
-#include <unordered_map>
-#include <map>
 #include <set>
 #include <vector>
 #include <bitset>
+#include <algorithm>
+#include <random>
+#include "aeol_common.h"
 using namespace std;
 
 /* raw data */
@@ -44,13 +45,13 @@ std::unordered_map<uint64_t, double> fRT;
 std::unordered_map<uint64_t, double> eRT;
 
 /* merged RT */
-std::map<uint64_t, double> RT;
+//std::map<uint64_t, double> RT;
 
 /* FP */
-std::map<uint64_t, double> FP;
+//std::map<uint64_t, double> FP;
 
 /* MR */
-std::map<uint64_t, double> MR;
+//std::map<uint64_t, double> MR;
 
 #define CLASSIFICATION
 
@@ -225,6 +226,105 @@ void eRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 	return;
 }
 
+
+void init_sol() {
+
+	//cout << "Start to finilize" << endl;
+    for (unordered_map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
+        e[N-1][it->first] = ref_time - it->second + 1;
+    }
+    L[N-1] = ref_time;
+    //cout << "End finilizing" << endl;
+
+	vector<uint64_t> order(N);
+	for (uint64_t i = 0; i < N; i++) {
+		//order.push_back(i);
+		order[i] = i;
+		cout << order[i] << " ";
+	}
+	
+	/* generating random order */
+
+	//auto engine = std::default_random_engine{}(std::random_device{}());
+	
+	std::default_random_engine engine(std::random_device{}());
+	shuffle(order.begin(), order.end(), engine);
+	//for (uint64_t i = 0; i < N; i++) {
+	//	int r = i + rand() % (N - i);
+	//	swap(order[i], order[r]);
+	//}
+
+	//random_suffle(order.begin(), order.end(), myrandom);
+
+	//unordered_map<uint64_t, uint64_t> interRTso;
+	cout << "order" << endl;
+	unordered_map<uint64_t, uint64_t> eTmp;
+	//cout << "here " << endl;
+	//for (auto oit = order.begin(), endit = order.end(); oit != endit; ++oit) {
+	//	uint64_t wid = *oit;
+	for (uint64_t i = 0; i < N; i++) {
+		uint64_t wid = order[i];
+		cout << wid << " ";
+			
+		for (auto it = eTmp.begin(), eit = eTmp.end(); it != eit; ++it) {
+			if (f[wid].find(it->first) != f[wid].end()) {
+				uint64_t tmp = it->second + f[wid][it->first] - 1;
+				if (interRT.find(tmp) != interRT.end()) {
+					interRT[tmp] += 1;
+				} else {
+					interRT[tmp] = 1;
+				}
+				eTmp[it->first] = e[wid][it->first];
+			} else {
+				eTmp[it->first] += L[wid];
+			}
+		}
+		
+		for (auto it = e[wid].begin(), eit = e[wid].end(); it != eit; ++it) {
+			eTmp[it->first] = it->second;
+		}
+	}
+	cout << endl;	
+
+	for (auto it = eTmp.begin(), eit = eTmp.end(); it != eit; ++it) {
+		if (interRT.find(it->second) != interRT.end()) {
+			interRT[it->second] += 1;
+		} else {
+			interRT[it->second] = 1;
+		}
+	}
+
+	unordered_map<uint64_t, uint64_t> fTmp;
+	for (auto oit = order.rbegin(), endit = order.rend(); oit != endit; ++oit) {
+		uint64_t wid = *oit;
+		if (fTmp.empty()) {
+			for (auto fit = f[wid].begin(), efit = f[wid].end(); fit != efit; ++fit) {
+                fTmp[fit->first] = fit->second;
+            }
+		} else {
+			for (auto it = fTmp.begin(), eit = fTmp.end(); it != eit; ++it) {
+				if (f[wid].find(it->first) != f[wid].end()) {
+					fTmp[it->first] = f[wid][it->first];
+				} else {
+					fTmp[it->first] += L[wid];
+				}
+			}
+		}
+		for (auto fit = f[wid].begin(), efit = f[wid].end(); fit != efit; ++fit) {
+			fTmp[fit->first] = fit->second;
+		}
+	}
+
+	for (auto it = fTmp.begin(), eit = fTmp.end(); it != eit; ++it) {
+        if (interRT.find(it->second) != interRT.end()) {
+            interRT[it->second] += 1;
+        } else {
+            interRT[it->second] = 1;
+        }
+    }
+
+	return;
+}
 
 void init_aeol() {
 	/* finilize exit time calculation for the last work group */
@@ -414,7 +514,7 @@ void alg3() {
 }
 
 void mergeRT() {
-    cout << "start to Merge RT" << endl;
+    //cout << "start to Merge RT" << endl;
     for (std::unordered_map<uint64_t, double>::iterator it = fRT.begin(), eit = fRT.end(); it != eit; ++it) {
         if (RT.find(it->first) != RT.end()) {
             RT[it->first] += it->second;
@@ -446,7 +546,7 @@ void mergeRT() {
             RT[it->first] = it->second;
         }
     }
-    cout << "end merge" << endl;
+    //cout << "end merge" << endl;
 
     return;
 
@@ -454,7 +554,7 @@ void mergeRT() {
 
 void RTtoFP() {
 
-	cout << "Cal fp" << endl;
+	//cout << "Cal fp" << endl;
 	uint64_t m = D.size();
 	//cout << "m " << m << endl;
 	//cout << "trace len " << trace_len << endl;
@@ -480,51 +580,15 @@ void RTtoFP() {
 	return;
 }
 
-void RTtoMR_AET() {
 
-	cout << "Start convert RT to MR" << endl;
+void sol() {
+	init_sol();
 
-	std::map<uint64_t, double> P;
-	double total_num_RT = 0;
-	uint64_t max_RT = 0;
+	mergeRT();
 
-	for (std::map<uint64_t, double>::reverse_iterator it = RT.rbegin(), eit = RT.rend(); it != eit; ++it) {
-		total_num_RT += it->second;
-		if (max_RT < it->first) {
-			max_RT = it->first;
-		}
-	}
-	double accumulate_num_RT = 0;
-	for (std::map<uint64_t, double>::reverse_iterator it = RT.rbegin(), eit = RT.rend(); it != eit; ++it) {
-		P[it->first] = accumulate_num_RT / total_num_RT;
-		//cout << accumulate_num_RT << " " << total_num_RT << endl;
-		accumulate_num_RT += it->second;
-		//cout << "P " << it->first << " " << P[it->first] << endl;
-	}
+	RTtoFP();
 
-	P[0] = 1;
-
-	double sum_P = 0;
-	uint64_t t = 0;
-	uint64_t prev_t = 0;
-	for (uint64_t c = 0; c <= max_RT; c++) {
-		while (sum_P < c && t <= max_RT) {
-			if (P.find(t) != P.end()) {
-				sum_P += P[t];
-				prev_t = t;
-			} else {
-				sum_P += P[prev_t];
-			}
-			t++;
-		}
-		/*
-		if (P.find(t) != P.end()) {
-			MR[c] = P[t];
-		} else {
-			MR[c] = P[prev_t];
-		}*/
-		MR[c] = P[prev_t];
-	}
+	RTtoMR_AET();
 
 	return;
 }
@@ -548,28 +612,6 @@ void aeol() {
 
 	RTtoMR_AET();
 
-	return;
-}
-
-void dumpMR() {
-	for (std::map<uint64_t, double>::iterator it = MR.begin(), eit = MR.end(); it != eit; ++it) {
-		cout << it->first << " " << it->second << endl;
-	}
-	return;
-}
-
-void dumpFP() {
-	for (std::map<uint64_t, double>::iterator it = FP.begin(), eit = FP.end(); it != eit; ++it) {
-		cout << it->first << " " << it->second << endl;
-	}
-
-	return;
-}
-
-void dumpRT() {
-	for (std::map<uint64_t, double>::iterator it = RT.begin(), eit = RT.end(); it != eit; ++it) {
-		cout << it->first << " " << it->second << endl;
-	}
 	return;
 }
 

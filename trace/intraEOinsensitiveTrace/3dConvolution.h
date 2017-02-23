@@ -4,11 +4,11 @@
 using namespace std;
 
 #define NI 3
-#define NJ 2048
-#define NK 2048
+#define NJ 256
+#define NK 256
 
-#define DIM_LOCAL_WORK_GROUP_X 32
-#define DIM_LOCAL_WORK_GROUP_Y 8
+#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_Y 4
 
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ * NK
@@ -308,7 +308,7 @@ void verify_kernel(float *B, float *B_ref) {
 	return;
 }
 
-int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void)) {
+int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
 
 	float *A;
 	float *B;
@@ -331,9 +331,11 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 
 	//for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
 	//	for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-	int cX = 1;
-	int cY = 1;
-
+	//	int cX = 1;
+	//	int cY = 1;
+	
+	if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
+		
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -350,8 +352,10 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 	
 			(*calculate)();
 			(*dump)();
-	//	}
-	//}
+	
+	} else {
+		cout << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+	}
 
 	return 0;
 }

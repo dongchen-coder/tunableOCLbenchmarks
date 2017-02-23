@@ -247,8 +247,8 @@ void init_sol() {
 
 	//auto engine = std::default_random_engine{}(std::random_device{}());
 	
-	std::default_random_engine engine(std::random_device{}());
-	shuffle(order.begin(), order.end(), engine);
+	//std::default_random_engine engine(std::random_device{}());
+	//shuffle(order.begin(), order.end(), engine);
 	//for (uint64_t i = 0; i < N; i++) {
 	//	int r = i + rand() % (N - i);
 	//	swap(order[i], order[r]);

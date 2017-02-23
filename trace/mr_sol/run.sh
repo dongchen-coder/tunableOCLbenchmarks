@@ -1,9 +1,16 @@
 
-for ITER in {1..30}
+for X in 1 2 4 8 16 32 64 256
+#for X in 1
 do
-	./3dConvolution_mr >> res/3dConvolution_mr_$ITER.txt &
+	for Y in 1 2 4 8 16 32 64 256
+#	for Y in 1
+	do
+		for ITER in {1..2}
+		do
+			./3dConvolution_mr $X $Y >> ./res/rand_256_16_4_${X}_${Y}_${ITER}.txt &
+		done
+	done
 done
-
 
 '''
 for ITER in {1..3}

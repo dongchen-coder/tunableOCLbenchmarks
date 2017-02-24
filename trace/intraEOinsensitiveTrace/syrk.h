@@ -105,7 +105,7 @@ void verify_syrk_kernel(float *C, float *C_ref) {
 	return;
 }
 
-int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
 
 	float alpha;
 	float beta;
@@ -146,6 +146,8 @@ int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			verify_syrk_kernel(C, C_ref);
 
 			(*calculate)();
+
+			(*dump)();
 
 		}
 	}

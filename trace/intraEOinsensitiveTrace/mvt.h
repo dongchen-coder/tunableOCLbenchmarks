@@ -3,16 +3,16 @@
 #include <iostream>
 using namespace std;
 
-#define N 4096
+#define nN 4096
 
 #define DIM_LOCAL_WORK_GROUP_X 16
 #define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
-#define X1_OFFSET N * N
-#define X2_OFFSET N * N + N
-#define Y1_OFFSET N * N + 2 * N
-#define Y2_OFFSET N * N + 3 * N
+#define X1_OFFSET nN * nN
+#define X2_OFFSET nN * nN + nN
+#define Y1_OFFSET nN * nN + 2 * nN
+#define Y2_OFFSET nN * nN + 3 * nN
 
 void mvt_kernel1_GXYW(float *A, float *x1, float *y1, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
@@ -29,13 +29,13 @@ void mvt_kernel1_GXYW(float *A, float *x1, float *y1, int widx, int widy, int li
 
 							int i = (wx * cX + x) * lidx + lx;
 
-							if (i < N) {
+							if (i < nN) {
 								//x1[i] = 0;
 								//(*access)(X1_OFFSET + i, wy * widx + wx);
 
-								for (int j = 0; j < N; j++) {
-									x1[i] += A[i * N + j] * y1[j];
-									(*access)(A_OFFSET + i * N + j, wy * widx + wx);
+								for (int j = 0; j < nN; j++) {
+									x1[i] += A[i * nN + j] * y1[j];
+									(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
 									(*access)(Y1_OFFSET + j, wy * widx + wx);
 									(*access)(X1_OFFSET + i, wy * widx + wx);
 
@@ -66,12 +66,12 @@ void mvt_kernel2_GXYW(float *A, float *x2, float *y2, int widx, int widy, int li
 
 							int i = (wx * cX + x) * lidx + lx;
 
-							if (i < N) {
+							if (i < nN) {
 								//x2[i] = 0;
 								//(*access)(X2_OFFSET + i, wy * widx + wx);
-								for (int j = 0; j < N; j++) {
-									x2[i] += A[j * N + i] * y2[j];	
-									(*access)(A_OFFSET + i * N + j, wy * widx + wx);
+								for (int j = 0; j < nN; j++) {
+									x2[i] += A[j * nN + i] * y2[j];	
+									(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
 									(*access)(Y2_OFFSET + j, wy * widx + wx);
 									(*access)(X2_OFFSET + i, wy * widx + wx);
 								}
@@ -88,13 +88,13 @@ void mvt_kernel2_GXYW(float *A, float *x2, float *y2, int widx, int widy, int li
 
 void init_data(float *A, float *x1, float *x2, float *y1, float *y2) {
 	
-	for (int i = 0; i < N; i++) {
-		x1[i] = ((float) i) / N;
-		x2[i] = ((float) i + 1) / N;
-		y1[i] = ((float) i + 3) / N;
-		y2[i] = ((float) i + 4) / N;
-		for (int j = 0; j < N; j++) {
-			A[i * N + j] = ((float) i*j) / N;
+	for (int i = 0; i < nN; i++) {
+		x1[i] = ((float) i) / nN;
+		x2[i] = ((float) i + 1) / nN;
+		y1[i] = ((float) i + 3) / nN;
+		y2[i] = ((float) i + 4) / nN;
+		for (int j = 0; j < nN; j++) {
+			A[i * nN + j] = ((float) i*j) / nN;
 		}
 	}
 
@@ -103,15 +103,15 @@ void init_data(float *A, float *x1, float *x2, float *y1, float *y2) {
 
 void mvt_cpu(float *A, float *x1, float *x2, float *y1, float *y2) {
 	
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			x1[i] = x1[i] + A[i * N + j] * y1[j];
+	for (int i = 0; i < nN; i++) {
+		for (int j = 0; j < nN; j++) {
+			x1[i] = x1[i] + A[i * nN + j] * y1[j];
 		}
 	}
 	
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			x2[i] = x2[i] + A[j * N + i] * y2[j];
+	for (int i = 0; i < nN; i++) {
+		for (int j = 0; j < nN; j++) {
+			x2[i] = x2[i] + A[j * nN + i] * y2[j];
 		}
 	}	
 	
@@ -120,7 +120,7 @@ void mvt_cpu(float *A, float *x1, float *x2, float *y1, float *y2) {
 
 void verify_kernel1(float *x, float *x_ref) {
 
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < nN; i++) {
 		if (x[i] != x_ref[i]) {
 			cout << "Error in kernel1" << endl;
 			return;
@@ -132,7 +132,7 @@ void verify_kernel1(float *x, float *x_ref) {
 
 void verify_kernel2(float *x, float *x_ref) {
 
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < nN; i++) {
 		if (x[i] != x_ref[i]) {
 			cout << "Error in kernel2" << endl;
 			return;
@@ -143,7 +143,7 @@ void verify_kernel2(float *x, float *x_ref) {
 }
 
 
-int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
 	
 	float *A;
 	float *x1;
@@ -153,13 +153,13 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 	float *x1_ref;
 	float *x2_ref;
 
-	A = (float *) malloc(N * N * sizeof(float));
-	x1 = (float *) malloc(N * sizeof(float));
-	x2 = (float *) malloc(N * sizeof(float));
-	y1 = (float *) malloc(N * sizeof(float));
-	y2 = (float *) malloc(N * sizeof(float));
-	x1_ref = (float *) malloc(N * sizeof(float));
-	x2_ref = (float *) malloc(N * sizeof(float));
+	A = (float *) malloc( nN * nN * sizeof(float));
+	x1 = (float *) malloc( nN * sizeof(float));
+	x2 = (float *) malloc( nN * sizeof(float));
+	y1 = (float *) malloc( nN * sizeof(float));
+	y2 = (float *) malloc( nN * sizeof(float));
+	x1_ref = (float *) malloc( nN * sizeof(float));
+	x2_ref = (float *) malloc( nN * sizeof(float));
 
 
 	init_data(A, x1_ref, x2_ref, y1, y2);
@@ -167,7 +167,7 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 
 	int lidx = DIM_LOCAL_WORK_GROUP_X;
 	int lidy = 1;
-	int gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
+	int gidx = (int)ceil(((float) nN) / ((float)lidx)) * lidx;
 	int gidy = 1;
 	int coalescingMax[2];
 	coalescingMax[0] = gidx / lidx;
@@ -194,7 +194,7 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 		}
 	}
 
-	gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
+	gidx = (int)ceil(((float) nN) / ((float)lidx)) * lidx;
 	gidy = 1;
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;

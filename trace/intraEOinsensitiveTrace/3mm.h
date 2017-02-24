@@ -242,7 +242,7 @@ bool verify(float *G, float *G_ref) {
 }
 	
 
-int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
 
 	float *A = (float *)malloc(sizeof(float) * NI * NK);
 	float *B = (float *)malloc(sizeof(float) * NK * NJ);
@@ -287,6 +287,8 @@ int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 
 			(*calculate)();			
 
+			(*dump)();
+
 		}
 	}
 
@@ -311,6 +313,8 @@ int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 	 	
 			(*calculate)();
 
+			(*dump)();
+
 		}
     }
 
@@ -334,6 +338,8 @@ int threeMMmain(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 			verify(G, G_ref);
 			
 			(*calculate)();
+
+			(*dump)();
 
 		}
 	}

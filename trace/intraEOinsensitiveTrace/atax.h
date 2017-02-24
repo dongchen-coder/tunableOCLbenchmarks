@@ -132,7 +132,7 @@ void verify_kernel2(float *y, float *y_ref) {
 	return;
 }
 
-int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY) {
 
 	float *A;
 	float *x;
@@ -176,6 +176,8 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 
 			(*calculate)();
 
+			(*dump)();
+
 		}
 	}
 
@@ -200,6 +202,7 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 
 			(*calculate)();
 
+			(*dump)();
 		}
 	}
 

@@ -101,7 +101,7 @@ void verify (float * C, float * C_ref) {
 	return;
 }
 
-int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {	
+int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {	
 	
 	float *A;
 	float *B;
@@ -147,6 +147,7 @@ int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			
 			(*calculate)();
 			
+			(*dump)();
 		}
 	}
 	

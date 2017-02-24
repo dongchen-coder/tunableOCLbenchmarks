@@ -122,7 +122,7 @@ void verify_kernel(double *B, double *B_ref) {
 	return;
 }
 
-int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY) {
 
 	double *A;
 	double *B;
@@ -159,7 +159,8 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			verify_kernel(B, B_ref);
 
 			(*calculate)();
-
+	
+			(*dump)();
 		}
 	}
 

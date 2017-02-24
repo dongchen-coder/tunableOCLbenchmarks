@@ -3,7 +3,7 @@
 #include <iostream>
 using namespace std;
 
-#define N 4096
+#define nN 4096
 #define DIM_LOCAL_WORK_GROUP_KERNEL_1_X 16
 #define DIM_LOCAL_WORK_GROUP_KERNEL_1_Y 1
 #define DIM_LOCAL_WORK_GROUP_KERNEL_2_X 16
@@ -12,14 +12,14 @@ using namespace std;
 #define DIM_LOCAL_WORK_GROUP_KERNEL_3_Y 1
 
 #define A_OFFSET 0
-#define U1_OFFSET N * N
-#define V1_OFFSET N * N + N
-#define U2_OFFSET N * N + 2 * N
-#define V2_OFFSET N * N + 3 * N
-#define X_OFFSET N * N + 4 * N
-#define Y_OFFSET N * N + 5 * N
-#define Z_OFFSET N * N + 6 * N
-#define W_OFFSET N * N + 7 * N
+#define U1_OFFSET nN * nN
+#define V1_OFFSET nN * nN + nN
+#define U2_OFFSET nN * nN + 2 * nN
+#define V2_OFFSET nN * nN + 3 * nN
+#define X_OFFSET nN * nN + 4 * nN
+#define Y_OFFSET nN * nN + 5 * nN
+#define Z_OFFSET nN * nN + 6 * nN
+#define W_OFFSET nN * nN + 7 * nN
 
 
 void gemver_kernel1_GXYW(float *A, float *U1, float *V1, float *U2, float *V2, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
@@ -39,13 +39,13 @@ void gemver_kernel1_GXYW(float *A, float *U1, float *V1, float *U2, float *V2, i
 								int j = (wx * cX + x) * lidx + lx;
 								int i = (wy * cY + y) * lidy + ly;
 
-								if ((i < N) && (j < N)) {
-									A[i * N + j] += U1[i] * V1[j] + U2[i] * V2[j];
+								if ((i < nN) && (j < nN)) {
+									A[i * nN + j] += U1[i] * V1[j] + U2[i] * V2[j];
 									(*access)(U1_OFFSET + i, wy * widx + wx);
 									(*access)(V1_OFFSET + j, wy * widx + wx);
 									(*access)(U2_OFFSET + i, wy * widx + wx);
                                     (*access)(V2_OFFSET + j, wy * widx + wx);
-									(*access)(A_OFFSET + i * N + j, wy * widx + wx);
+									(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
 								}
 							}
 						}
@@ -78,13 +78,13 @@ void gemver_kernel2_GXYW(float beta, float *A, float *X, float *Y, float *Z, int
 							//	cout << i << endl; 
 							//}
 
-							if (i < N) {
+							if (i < nN) {
 								X[i] = 0;
 								(*access)(X_OFFSET + i, wy * widx + wx);
 								int j;
-								for(j = 0; j < N; j++) {
-									X[i] += beta * A[j * N + i] * Y[j];
-									(*access)(A_OFFSET + j * N + i, wy * widx + wx);
+								for(j = 0; j < nN; j++) {
+									X[i] += beta * A[j * nN + i] * Y[j];
+									(*access)(A_OFFSET + j * nN + i, wy * widx + wx);
 									(*access)(Y_OFFSET + j, wy * widx + wx);
 									(*access)(X_OFFSET + i, wy * widx + wx);
 								}
@@ -115,12 +115,12 @@ void gemver_kernel3_GXYW(float alpha, float *A, float *X, float *W, int widx, in
 						
 						for (int x = 0; x < cX; x++) {
 							int i = (wx * cX + x) * lidx + lx;
-							if (i < N) {
+							if (i < nN) {
 								W[i] = 0;
 								(*access)(W_OFFSET + i, wy * widx + wx);
-								for(int j = 0; j < N; j++) {
-									W[i] += alpha * A[i * N + j] * X[j];
-									(*access)(A_OFFSET + i * N + j, wy * widx + wx);
+								for(int j = 0; j < nN; j++) {
+									W[i] += alpha * A[i * nN + j] * X[j];
+									(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
 									(*access)(X_OFFSET + j, wy * widx + wx);
 									(*access)(W_OFFSET + i, wy * widx + wx);
 								}
@@ -139,19 +139,19 @@ void init_data(float *alpha, float *beta, float *A, float *u1, float *v1, float 
 	*alpha = 43532;
 	*beta = 12313;
 
-	for (int i = 0; i < N; i++)
+	for (int i = 0; i < nN; i++)
 	{
 		u1[i] = i;
-		u2[i] = (i+1)/N/2.0;
-		v1[i] = (i+1)/N/4.0;
-		v2[i] = (i+1)/N/6.0;
-		y[i] = (i+1)/N/8.0;
-		z[i] = (i+1)/N/9.0;
+		u2[i] = (i+1)/ nN /2.0;
+		v1[i] = (i+1)/ nN /4.0;
+		v2[i] = (i+1)/ nN /6.0;
+		y[i] = (i+1)/ nN /8.0;
+		z[i] = (i+1)/ nN /9.0;
 		x[i] = 0.0;
 		w[i] = 0.0;
 
-		for (int j = 0; j < N; j++) {
-			A[i * N + j] = ((float) i*j) / N;
+		for (int j = 0; j < nN; j++) {
+			A[i * nN + j] = ((float) i*j) / nN;
 		}
 	}
 
@@ -160,25 +160,25 @@ void init_data(float *alpha, float *beta, float *A, float *u1, float *v1, float 
 
 void gemver_cpu(float alpha, float beta, float *A, float *u1, float *v1, float *u2, float *v2, float *w, float *x, float *y, float *z) {
 
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			A[i * N + j] = A[i * N + j] + u1[i] * v1[j] + u2[i] * v2[j];
+	for (int i = 0; i < nN; i++) {
+		for (int j = 0; j < nN; j++) {
+			A[i * nN + j] = A[i * nN + j] + u1[i] * v1[j] + u2[i] * v2[j];
 		}
 	}
 
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			x[i] = x[i] + beta * A[j * N + i] * y[j];
+	for (int i = 0; i < nN; i++) {
+		for (int j = 0; j < nN; j++) {
+			x[i] = x[i] + beta * A[j * nN + i] * y[j];
 		}
 	}
 
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < nN; i++) {
 		x[i] = x[i] + z[i];
 	}
 
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			w[i] = w[i] +  alpha * A[i * N + j] * x[j];
+	for (int i = 0; i < nN; i++) {
+		for (int j = 0; j < nN; j++) {
+			w[i] = w[i] +  alpha * A[i * nN + j] * x[j];
 		}
 	}
 
@@ -187,9 +187,9 @@ void gemver_cpu(float alpha, float beta, float *A, float *u1, float *v1, float *
 
 void verify_kernel1(float *A, float *A_ref) {
 	
-	for (int i = 0; i < N; i++) {
-		for (int j = 0; j < N; j++) {
-			if (A[i * N + j] != A_ref[i * N + j]) {
+	for (int i = 0; i < nN; i++) {
+		for (int j = 0; j < nN; j++) {
+			if (A[i * nN + j] != A_ref[i * nN + j]) {
 				cout << "Error in kernel 1" << endl;
 				return;
 			}
@@ -201,7 +201,7 @@ void verify_kernel1(float *A, float *A_ref) {
 
 void verify_kernel2(float *x, float *x_ref) {
 
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < nN; i++) {
 		if (x[i] != x_ref[i]) {
 			cout << "Error in kernel 2" << endl;
 			return;
@@ -212,7 +212,7 @@ void verify_kernel2(float *x, float *x_ref) {
 
 void verify_kernel3(float *w, float *w_ref) {
 	
-	for (int i = 0; i < N; i++) {
+	for (int i = 0; i < nN; i++) {
 		if (w[i] != w_ref[i]) {
 			cout << "Error in kernel 3" << endl;
 			return;
@@ -223,7 +223,7 @@ void verify_kernel3(float *w, float *w_ref) {
 }
 
 
-int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
 
 	float alpha;
 	float beta;
@@ -241,18 +241,18 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 	float *x_ref;
 	float *w_ref;
 
-	A = (float *) malloc(N * N * sizeof(float));
-	u1 = (float *) malloc(N * sizeof(float));
-	v1 = (float *) malloc(N * sizeof(float));
-	u2 = (float *) malloc(N * sizeof(float));
-	v2 = (float *) malloc(N * sizeof(float));
-	w = (float *) malloc(N * sizeof(float));
-	x = (float *) malloc(N * sizeof(float));
-	y = (float *) malloc(N * sizeof(float));
-	z = (float *) malloc(N * sizeof(float));
-	A_ref = (float *) malloc(N * N * sizeof(float));
-	x_ref = (float *) malloc(N * sizeof(float));
-	w_ref = (float *) malloc(N * sizeof(float));
+	A = (float *) malloc( nN * nN * sizeof(float));
+	u1 = (float *) malloc( nN * sizeof(float));
+	v1 = (float *) malloc( nN * sizeof(float));
+	u2 = (float *) malloc( nN * sizeof(float));
+	v2 = (float *) malloc( nN * sizeof(float));
+	w = (float *) malloc( nN * sizeof(float));
+	x = (float *) malloc( nN * sizeof(float));
+	y = (float *) malloc( nN * sizeof(float));
+	z = (float *) malloc( nN * sizeof(float));
+	A_ref = (float *) malloc( nN * nN * sizeof(float));
+	x_ref = (float *) malloc( nN * sizeof(float));
+	w_ref = (float *) malloc( nN * sizeof(float));
 
 	init_data(&alpha, &beta, A_ref, u1, v1, u2, v2, w_ref, x_ref, y, z);
 	init_data(&alpha, &beta, A, u1, v1, u2, v2, w, x, y, z);
@@ -261,8 +261,8 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 
 	int lidx = DIM_LOCAL_WORK_GROUP_KERNEL_1_X;
 	int lidy = DIM_LOCAL_WORK_GROUP_KERNEL_1_Y;
-	int gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
-	int gidy = (int)ceil(((float)N) / ((float)lidy)) * lidy;
+	int gidx = (int)ceil(((float) nN) / ((float)lidx)) * lidx;
+	int gidy = (int)ceil(((float) nN) / ((float)lidy)) * lidy;
 	int coalescingMax[2];
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
@@ -289,7 +289,7 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 
 	lidx = DIM_LOCAL_WORK_GROUP_KERNEL_2_X;
 	lidy = DIM_LOCAL_WORK_GROUP_KERNEL_2_Y;
-	gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
+	gidx = (int)ceil(((float) nN) / ((float)lidx)) * lidx;
 	gidy = 1;
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
@@ -316,7 +316,7 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 
 	lidx = DIM_LOCAL_WORK_GROUP_KERNEL_3_X;
 	lidy = DIM_LOCAL_WORK_GROUP_KERNEL_3_Y;
-	gidx = (int)ceil(((float)N) / ((float)lidx)) * lidx;
+	gidx = (int)ceil(((float) nN) / ((float)lidx)) * lidx;
 	gidy = 1;
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;

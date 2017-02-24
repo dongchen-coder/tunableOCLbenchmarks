@@ -22,8 +22,6 @@ int main(int argc, char* argv[]) {
 
 	convolution3d_main(f1, f2, f3, f4, cX, cY);
 
-	reset();
-
 	return 0;
 }
 

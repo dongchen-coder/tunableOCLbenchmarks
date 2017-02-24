@@ -147,7 +147,7 @@ void verify_kernel2(float *s, float *s_ref) {
 	return;
 }
 
-int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void)) {
+int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY) {
 
 	float *A;
 	float *s;
@@ -193,6 +193,8 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 
 			(*calculate)();
 
+			(*dump)();
+
 		}
 	}
 
@@ -217,6 +219,8 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 
 			(*calculate)();
 
+			(*dump)();
+		
 		}
 	}
 

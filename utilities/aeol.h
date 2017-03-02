@@ -80,32 +80,32 @@ void address_sampling() {
 #define BLOCK_NUM 256
 
 inline uint64_t valueToBin(uint64_t value) {
-    if (value < ((uint64_t)1 << THRESHOLD)) {
-        return value;
-    } else {
-        uint64_t base;
-        for (int i = THRESHOLD+1; i < 64; i++) {
-            if (value < ((uint64_t)1 << i)) {
-                base = ((uint64_t)1 << (i-1));
-                return base + (value - base) / (base / BLOCK_NUM) * (base / BLOCK_NUM);
-            }
-        }
-        base = ((uint64_t)1 << 63);
-        return base + (value - base) / (base / BLOCK_NUM) * (base / BLOCK_NUM);
-    }
+	if (value < ((uint64_t)1 << THRESHOLD)) {
+		return value;
+	} else {
+		uint64_t base;
+		for (int i = THRESHOLD+1; i < 64; i++) {
+			if (value < ((uint64_t)1 << i)) {
+				base = ((uint64_t)1 << (i-1));
+				return base + (value - base) / (base / BLOCK_NUM) * (base / BLOCK_NUM);
+			}
+		}
+		base = ((uint64_t)1 << 63);
+		return base + (value - base) / (base / BLOCK_NUM) * (base / BLOCK_NUM);
+	}
 }
 
 void intraRT_cal(uint64_t addr, uint64_t time) {
 
-    if (prevs.find(addr) != prevs.end()) {
-        if (intraRT.find(time - prevs[addr]) != intraRT.end()) {
-            intraRT[time - prevs[addr]] += 1;
-        } else {
-            intraRT[time - prevs[addr]] = 1;
-        }
-    }
+	if (prevs.find(addr) != prevs.end()) {
+		if (intraRT.find(time - prevs[addr]) != intraRT.end()) {
+			intraRT[time - prevs[addr]] += 1;
+		} else {
+			intraRT[time - prevs[addr]] = 1;
+		}
+	}
 
-    return;
+	return;
 }
 
 void access(uint64_t addr, uint64_t wgid) {
@@ -202,10 +202,10 @@ void fRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 double averagedECount(int n, int m, int i) {
 	
 	double res = 1;
-    for (int j = 0; j < i; j++) {
-        res *= double (m-j) / (n-j);
-    }
-    return res / (n-i);
+	for (int j = 0; j < i; j++) {
+		res *= double (m-j) / (n-j);
+	}
+	return res / (n-i);
 }
 
 void eRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
@@ -227,43 +227,33 @@ void eRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 }
 
 
-void init_sol() {
+void init_sol_org() {
 
 	//cout << "Start to finilize" << endl;
-    for (unordered_map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
-        e[N-1][it->first] = ref_time - it->second + 1;
-    }
-    L[N-1] = ref_time;
-    //cout << "End finilizing" << endl;
+	for (unordered_map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
+		e[N-1][it->first] = ref_time - it->second + 1;
+	}
+	L[N-1] = ref_time;
+	//cout << "End finilizing" << endl;
 
 	vector<uint64_t> order(N);
 	for (uint64_t i = 0; i < N; i++) {
 		//order.push_back(i);
 		order[i] = i;
-		cout << order[i] << " ";
+		//cout << order[i] << " ";
 	}
 	
 	/* generating random order */
 
-	//auto engine = std::default_random_engine{}(std::random_device{}());
 	
-	//std::default_random_engine engine(std::random_device{}());
-	//shuffle(order.begin(), order.end(), engine);
-	//for (uint64_t i = 0; i < N; i++) {
-	//	int r = i + rand() % (N - i);
-	//	swap(order[i], order[r]);
-	//}
+	std::default_random_engine engine(std::random_device{}());
+	shuffle(order.begin(), order.end(), engine);
 
-	//random_suffle(order.begin(), order.end(), myrandom);
 
-	//unordered_map<uint64_t, uint64_t> interRTso;
 	cout << "order" << endl;
 	unordered_map<uint64_t, uint64_t> eTmp;
-	//cout << "here " << endl;
-	//for (auto oit = order.begin(), endit = order.end(); oit != endit; ++oit) {
-	//	uint64_t wid = *oit;
-	for (uint64_t i = 0; i < N; i++) {
-		uint64_t wid = order[i];
+	for (auto oit = order.begin(), endit = order.end(); oit != endit; ++oit) {
+		uint64_t wid = *oit;
 		cout << wid << " ";
 			
 		for (auto it = eTmp.begin(), eit = eTmp.end(); it != eit; ++it) {
@@ -299,8 +289,8 @@ void init_sol() {
 		uint64_t wid = *oit;
 		if (fTmp.empty()) {
 			for (auto fit = f[wid].begin(), efit = f[wid].end(); fit != efit; ++fit) {
-                fTmp[fit->first] = fit->second;
-            }
+				fTmp[fit->first] = fit->second;
+			}
 		} else {
 			for (auto it = fTmp.begin(), eit = fTmp.end(); it != eit; ++it) {
 				if (f[wid].find(it->first) != f[wid].end()) {
@@ -316,15 +306,120 @@ void init_sol() {
 	}
 
 	for (auto it = fTmp.begin(), eit = fTmp.end(); it != eit; ++it) {
-        if (interRT.find(it->second) != interRT.end()) {
-            interRT[it->second] += 1;
-        } else {
-            interRT[it->second] = 1;
-        }
-    }
+		if (interRT.find(it->second) != interRT.end()) {
+			interRT[it->second] += 1;
+		} else {
+			interRT[it->second] = 1;
+		}
+	}
 
 	return;
 }
+
+void init_sol() {
+
+	//cout << "Start to finilize" << endl;
+	for (unordered_map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
+		e[N-1][it->first] = ref_time - it->second + 1;
+	}
+	L[N-1] = ref_time;
+	//cout << "End finilizing" << endl;
+
+	vector<uint64_t> order(N);
+	for (uint64_t i = 0; i < N; i++) {
+		order[i] = i;
+		//cout << order[i] << " ";
+	}
+
+	/* generating random order */
+	std::default_random_engine engine(std::random_device{}());
+	shuffle(order.begin(), order.end(), engine);
+	
+	/* calculating the length between all work groups */
+	unordered_map<uint64_t, unordered_map<uint64_t, uint64_t> > lenAll;
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (j == 0) {
+				lenAll[i][i] = L[order[i]]; 
+			}
+			if (i+j < N) {
+				lenAll[i][i+j] = lenAll[i][i+j-1] + L[order[i+j]];
+			}
+		}
+	}
+
+	/* calculating inter work group reuse */
+	unordered_map<uint64_t, uint64_t> wid_prev;
+	for (uint64_t i = 0; i < N; i++) {
+		uint64_t wid = order[i];
+		cout << wid << " ";
+	
+		if (i == 0) {
+			for (auto it = e[wid].begin(), eit = e[wid].end(); it != eit; ++it) {
+				wid_prev[it->first] = i;
+			}
+		} else {
+			for (auto it = f[wid].begin(), eit = f[wid].end(); it != eit; ++it) {
+				if (wid_prev.find(it->first) != wid_prev.end()) {
+					uint64_t wid_start = wid_prev[it->first];
+					uint64_t rtTmp;
+					if (wid_start + 1 <= i - 1) {
+						rtTmp = e[wid_start][it->first] + lenAll[wid_start+1][i-1] + f[i][it->first];
+					} else {
+						rtTmp = e[wid_start][it->first] + f[i][it->first];
+					}
+					if (interRT.find(rtTmp) != interRT.end()) {
+						interRT[rtTmp] += 1;
+					} else {
+						interRT[rtTmp] = 1;
+					}
+				}
+			}
+		}
+	}
+
+	/* calculating global first access time */
+	wid_prev.clear();
+	uint64_t tmpLen = 0;
+	for (uint64_t i = 0; i < N; i++) {
+		uint64_t wid = order[i];
+		for (auto it = f[wid].begin(), eit = f[wid].end(); it != eit; ++it) {
+			if (wid_prev.find(it->first) == wid_prev.end()) {
+				uint64_t rtTmp = tmpLen + it->second;
+				if (interRT.find(rtTmp) != interRT.end()) {
+					interRT[rtTmp] += 1;
+				} else {
+					interRT[rtTmp] = 1;
+				}
+				wid_prev[it->first];
+			}
+		}
+		tmpLen += L[wid];
+	}
+
+	/* calculating global exit time */
+	wid_prev.clear();
+	tmpLen = 0;
+	for (uint64_t i = 0; i < N; i++) {
+		uint64_t wid = order[N - 1 - i];
+		for (auto it = e[wid].begin(), eit = e[wid].end(); it != eit; ++it) {
+			if (wid_prev.find(it->first) == wid_prev.end()) {
+				uint64_t rtTmp = tmpLen + it->second;
+				if (interRT.find(rtTmp) != interRT.end()) {
+					interRT[rtTmp] += 1;
+				} else {
+					interRT[rtTmp] = 1;
+				}
+				wid_prev[it->first];
+			}
+		}
+		tmpLen += L[wid];
+	}
+
+
+	return;
+}
+
 
 void init_aeol() {
 	/* finilize exit time calculation for the last work group */
@@ -463,9 +558,9 @@ void alg2() {
 					uint64_t tmpRT = *eit + aveL[*it] * i + *fit - 1;
 					//cout << "rt " << tmpRT << endl;
 					if (interRT.find(tmpRT) != interRT.end()) {
-					    interRT[tmpRT] += averagedCount(N, M[*it], i);
+						interRT[tmpRT] += averagedCount(N, M[*it], i);
 					} else {
-					    interRT[tmpRT] = averagedCount(N, M[*it], i);
+						interRT[tmpRT] = averagedCount(N, M[*it], i);
 					}
 				}
 			}
@@ -514,41 +609,41 @@ void alg3() {
 }
 
 void mergeRT() {
-    //cout << "start to Merge RT" << endl;
-    for (std::unordered_map<uint64_t, double>::iterator it = fRT.begin(), eit = fRT.end(); it != eit; ++it) {
-        if (RT.find(it->first) != RT.end()) {
-            RT[it->first] += it->second;
-        } else {
-            RT[it->first] = it->second;
-        }
-    }
+	//cout << "start to Merge RT" << endl;
+	for (std::unordered_map<uint64_t, double>::iterator it = fRT.begin(), eit = fRT.end(); it != eit; ++it) {
+		if (RT.find(it->first) != RT.end()) {
+			RT[it->first] += it->second;
+		} else {
+			RT[it->first] = it->second;
+		}
+	}
 
-    for (std::unordered_map<uint64_t, double>::iterator it = eRT.begin(), eit = eRT.end(); it != eit; ++it) {
-        if (RT.find(it->first) != RT.end()) {
-            RT[it->first] += it->second;
-        } else {
-            RT[it->first] = it->second;
-        }
-    }
+	for (std::unordered_map<uint64_t, double>::iterator it = eRT.begin(), eit = eRT.end(); it != eit; ++it) {
+		if (RT.find(it->first) != RT.end()) {
+			RT[it->first] += it->second;
+		} else {
+			RT[it->first] = it->second;
+		}
+	}
 
-    for (std::unordered_map<uint64_t, uint64_t>::iterator it = intraRT.begin(), eit = intraRT.end(); it != eit; ++it) {
-        if (RT.find(it->first) != RT.end()) {
-            RT[it->first] += it->second;
-        } else {
-            RT[it->first] = it->second;
-        }
-    }
+	for (std::unordered_map<uint64_t, uint64_t>::iterator it = intraRT.begin(), eit = intraRT.end(); it != eit; ++it) {
+		if (RT.find(it->first) != RT.end()) {
+			RT[it->first] += it->second;
+		} else {
+			RT[it->first] = it->second;
+		}
+	}
 
-    for (std::unordered_map<uint64_t, double>::iterator it = interRT.begin(), eit = interRT.end(); it != eit; ++it) {
-        if (RT.find(it->first) != RT.end()) {
-            RT[it->first] += it->second;
-        } else {
-            RT[it->first] = it->second;
-        }
-    }
-    //cout << "end merge" << endl;
+	for (std::unordered_map<uint64_t, double>::iterator it = interRT.begin(), eit = interRT.end(); it != eit; ++it) {
+		if (RT.find(it->first) != RT.end()) {
+			RT[it->first] += it->second;
+		} else {
+			RT[it->first] = it->second;
+		}
+	}
+	//cout << "end merge" << endl;
 
-    return;
+	return;
 
 }
 
@@ -571,10 +666,10 @@ void RTtoFP() {
 		FP[i] = tmp / (trace_len - i + 1); 
 	
 		if (i < ((uint64_t)1 << THRESHOLD)) {
-            i++;
-        } else {
-            i += i / BLOCK_NUM;
-        }
+			i++;
+		} else {
+			i += i / BLOCK_NUM;
+		}
 	}
 
 	return;
@@ -586,7 +681,7 @@ void sol() {
 
 	mergeRT();
 
-	RTtoFP();
+	//RTtoFP();
 
 	RTtoMR_AET();
 

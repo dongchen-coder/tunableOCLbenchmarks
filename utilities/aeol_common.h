@@ -83,7 +83,8 @@ void dumpMR() {
 			if (it3 == MR.end()) {
 				break;
 			}
-			if (it3->second == it2->second) {
+			//if (it3->second == it2->second) {
+			if (it1->second - it3->second < 0.00001) {
 				++it2;
 			} else {
 				break;

@@ -8,7 +8,7 @@ int main(int argc, char* argv[]) {
 	void (*f1) (uint64_t, uint64_t) = access;
     void (*f2) () = reset;
     void (*f3) () = sol;
-	void (*f4) () = dumpALL;
+	void (*f4) () = dumpMR;
 
 	int cX, cY, kID;
     if (argc != 4) {

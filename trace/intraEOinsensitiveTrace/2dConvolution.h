@@ -122,7 +122,7 @@ void verify_kernel(double *B, double *B_ref) {
 	return;
 }
 
-int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY) {
+int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY, int kID) {
 
 	double *A;
 	double *B;
@@ -143,10 +143,9 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	//for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-	//	for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
 
-	if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
+	if (kID == 0) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 	
 			(*reset)();
 
@@ -163,15 +162,10 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			(*calculate)();
 	
 			(*dump)();
-	} else {
-		cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+		}
 	}
-
-
-	//	}
-	//}
-
-
 
 	return 0;
 }

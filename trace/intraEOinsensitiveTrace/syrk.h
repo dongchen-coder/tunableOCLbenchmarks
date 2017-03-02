@@ -105,7 +105,7 @@ void verify_syrk_kernel(float *C, float *C_ref) {
 	return;
 }
 
-int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
+int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY, int kID) {
 
 	float alpha;
 	float beta;
@@ -128,7 +128,8 @@ int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
+	if (kID == 0) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			init_data(&alpha, &beta, A, C);
 
 			(*reset)();
@@ -146,8 +147,9 @@ int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*calculate)();
 
 			(*dump)();
-	} else {
-		cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+		}
 	}
 
 	return 0;

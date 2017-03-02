@@ -4,11 +4,11 @@
 using namespace std;
 
 #define NI 3
-#define NJ 256
-#define NK 256
+#define NJ 2048
+#define NK 2048
 
-#define DIM_LOCAL_WORK_GROUP_X 16
-#define DIM_LOCAL_WORK_GROUP_Y 4
+#define DIM_LOCAL_WORK_GROUP_X 32
+#define DIM_LOCAL_WORK_GROUP_Y 8
 
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ * NK
@@ -354,7 +354,8 @@ int convolution3d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			(*dump)();
 	
 	} else {
-		cout << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+		cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
+
 	}
 
 	return 0;

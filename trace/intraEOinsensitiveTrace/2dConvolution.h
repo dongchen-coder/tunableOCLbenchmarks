@@ -7,8 +7,8 @@ using namespace std;
 #define NI 4096
 #define NJ 4096
 
-#define DIM_LOCAL_WORK_GROUP_X 16
-#define DIM_LOCAL_WORK_GROUP_Y 1
+#define DIM_LOCAL_WORK_GROUP_X 32
+#define DIM_LOCAL_WORK_GROUP_Y 8
 
 #define A_OFFSET 0
 #define B_OFFSET NI * NJ
@@ -143,9 +143,11 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
+	//for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
+	//	for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
 
+	if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
+	
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -161,8 +163,13 @@ int convolution2d_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset
 			(*calculate)();
 	
 			(*dump)();
-		}
+	} else {
+		cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 	}
+
+
+	//	}
+	//}
 
 
 

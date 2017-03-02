@@ -7,6 +7,9 @@ CC = g++
 CFLAGS  = -O3 -fopenmp
 INC = ../../utilities/hrtimer_x86.c
 
+SOURCE = src/
+BIN = bin/
+
 # the build target executable:
 CON3D = 3dConvolution_mr
 CON2D = 2dConvolution_mr
@@ -23,53 +26,53 @@ SYRK = syrk_mr
 
 all: $(CON3D) $(CON2D) $(3MM) $(ATAX) $(BICG) $(CORRELATION) $(COVARIANCE) $(GEMM) $(GEMVER) $(GESUMMV) $(MVT) $(SYRK)
 
-$(CON3D): $(CON3D).c
-	$(CC) $(CFLAGS) $(INC) -o $(CON3D) $(CON3D).c
+$(CON3D): $(SOURCE)$(CON3D).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(CON3D) $(SOURCE)$(CON3D).c
 
-$(CON2D): $(CON2D).c
-	$(CC) $(CFLAGS) $(INC) -o $(CON2D) $(CON2D).c
+$(CON2D): $(SOURCE)$(CON2D).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(CON2D) $(SOURCE)$(CON2D).c
 
-$(3MM): $(3MM).c
-	$(CC) $(CFLAGS) $(INC) -o $(3MM) $(3MM).c
+$(3MM): $(SOURCE)$(3MM).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(3MM) $(SOURCE)$(3MM).c
 
-$(ATAX): $(ATAX).c
-	$(CC) $(CFLAGS) $(INC) -o $(ATAX) $(ATAX).c
+$(ATAX): $(SOURCE)$(ATAX).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(ATAX) $(SOURCE)$(ATAX).c
 
-$(BICG): $(BICG).c
-	$(CC) $(CFLAGS) $(INC) -o $(BICG) $(BICG).c
+$(BICG): $(SOURCE)$(BICG).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(BICG) $(SOURCE)$(BICG).c
 
-$(CORRELATION): $(CORRELATION).c
-	$(CC) $(CFLAGS) $(INC) -o $(CORRELATION) $(CORRELATION).c
+$(CORRELATION): $(SOURCE)$(CORRELATION).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(CORRELATION) $(SOURCE)$(CORRELATION).c
 
-$(COVARIANCE): $(COVARIANCE).c
-	$(CC) $(CFLAGS) $(INC) -o $(COVARIANCE) $(COVARIANCE).c
+$(COVARIANCE): $(SOURCE)$(COVARIANCE).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(COVARIANCE) $(SOURCE)$(COVARIANCE).c
 
-$(GEMM): $(GEMM).c
-	$(CC) $(CFLAGS) $(INC) -o $(GEMM) $(GEMM).c
+$(GEMM): $(SOURCE)$(GEMM).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(GEMM) $(SOURCE)$(GEMM).c
 
-$(GEMVER): $(GEMVER).c
-	$(CC) $(CFLAGS) $(INC) -o $(GEMVER) $(GEMVER).c
+$(GEMVER): $(SOURCE)$(GEMVER).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(GEMVER) $(SOURCE)$(GEMVER).c
 
-$(GESUMMV): $(GESUMMV).c
-	$(CC) $(CFLAGS) $(INC) -o $(GESUMMV) $(GESUMMV).c
+$(GESUMMV): $(SOURCE)$(GESUMMV).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(GESUMMV) $(SOURCE)$(GESUMMV).c
 
-$(MVT): $(MVT).c
-	$(CC) $(CFLAGS) $(INC) -o $(MVT) $(MVT).c
+$(MVT): $(SOURCE)$(MVT).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(MVT) $(SOURCE)$(MVT).c
 
-$(SYRK): $(SYRK).c
-	$(CC) $(CFLAGS) $(INC) -o $(SYRK) $(SYRK).c
+$(SYRK): $(SOURCE)$(SYRK).c
+	$(CC) $(CFLAGS) $(INC) -o $(BIN)$(SYRK) $(SOURCE)$(SYRK).c
 
 clean:
-	$(RM) $(CON3D)
-	$(RM) $(CON2D)
-	$(RM) $(3MM)
-	$(RM) $(ATAX)
-	$(RM) $(BICG)
-	$(RM) $(CORRELATION)
-	$(RM) $(COVARIANCE)
-	$(RM) $(GEMM)
-	$(RM) $(GEMVER)
-	$(RM) $(GESUMMV)
-	$(RM) $(MVT)
-	$(RM) $(SYRK)
+	$(RM) $(BIN)$(CON3D)
+	$(RM) $(BIN)$(CON2D)
+	$(RM) $(BIN)$(3MM)
+	$(RM) $(BIN)$(ATAX)
+	$(RM) $(BIN)$(BICG)
+	$(RM) $(BIN)$(CORRELATION)
+	$(RM) $(BIN)$(COVARIANCE)
+	$(RM) $(BIN)$(GEMM)
+	$(RM) $(BIN)$(GEMVER)
+	$(RM) $(BIN)$(GESUMMV)
+	$(RM) $(BIN)$(MVT)
+	$(RM) $(BIN)$(SYRK)
 

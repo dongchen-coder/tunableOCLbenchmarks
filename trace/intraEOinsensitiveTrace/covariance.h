@@ -6,11 +6,11 @@ using namespace std;
 #define mM 2048
 #define nN 2048
 
-#define DIM_LOCAL_WORK_GROUP_KERNEL_1_X 16
+#define DIM_LOCAL_WORK_GROUP_KERNEL_1_X 256
 #define DIM_LOCAL_WORK_GROUP_KERNEL_1_Y 1
-#define DIM_LOCAL_WORK_GROUP_KERNEL_2_X 16
-#define DIM_LOCAL_WORK_GROUP_KERNEL_2_Y 1
-#define DIM_LOCAL_WORK_GROUP_KERNEL_3_X 16
+#define DIM_LOCAL_WORK_GROUP_KERNEL_2_X 32
+#define DIM_LOCAL_WORK_GROUP_KERNEL_2_Y 8
+#define DIM_LOCAL_WORK_GROUP_KERNEL_3_X 256
 #define DIM_LOCAL_WORK_GROUP_KERNEL_3_Y 1
 
 #define DATA_OFFSET 0
@@ -206,7 +206,7 @@ void verify_kernel3(float *symmat, float *symmat_ref) {
 	return;
 }
 
-int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void),int cX, int cY) {
+int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void),int cX, int cY, int kID) {
 
 	float float_n= 3214212.01;
 
@@ -237,9 +237,8 @@ int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(v
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 0) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -255,9 +254,11 @@ int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(v
 			(*calculate)();
 
 			(*dump)();
-
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
+
 
 	lidx = DIM_LOCAL_WORK_GROUP_KERNEL_2_X;
 	lidy = DIM_LOCAL_WORK_GROUP_KERNEL_2_Y;
@@ -266,9 +267,8 @@ int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(v
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 1) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			init_data(data);
@@ -286,9 +286,11 @@ int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(v
 			(*calculate)();
 
 			(*dump)();
-
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
+
 
 	lidx = DIM_LOCAL_WORK_GROUP_KERNEL_3_X;
 	lidy = DIM_LOCAL_WORK_GROUP_KERNEL_3_Y;
@@ -297,9 +299,8 @@ int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(v
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 2) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			init_data(data);
@@ -317,6 +318,8 @@ int covariance_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(v
 			(*calculate)();
 
 			(*dump)();
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
 

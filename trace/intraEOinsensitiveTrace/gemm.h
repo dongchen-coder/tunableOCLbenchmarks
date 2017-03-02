@@ -7,8 +7,8 @@ using namespace std;
 #define NJ 512
 #define NK 512
 
-#define DIM_LOCAL_WORK_GROUP_X 16
-#define DIM_LOCAL_WORK_GROUP_Y 1
+#define DIM_LOCAL_WORK_GROUP_X 32
+#define DIM_LOCAL_WORK_GROUP_Y 8
 
 void gemm_GXYW(float *A, float *B, float *C, float alpha, float beta, int cX, int cY, int widx, int widy, int lidx, int lidy, void (*access)(uint64_t addr, uint64_t wgid)) {
 	//printf("wdix %d wdiy %d; cX %d cY %d; lidx %d lidy %d\n", widx, widy, cX, cY, lidx, lidy);
@@ -129,9 +129,8 @@ int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-			
+
+	if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {		
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -148,7 +147,8 @@ int gemm_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*calculate)();
 			
 			(*dump)();
-		}
+	} else {
+		cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 	}
 	
 	return 0;

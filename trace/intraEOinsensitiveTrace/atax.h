@@ -5,8 +5,8 @@ using namespace std;
 
 #define NX 4096
 #define NY 4096
-#define DIM_LOCAL_WORK_GROUP_X 16
-#define DIM_LOCAL_WORK_GROUP_Y 1
+#define DIM_LOCAL_WORK_GROUP_X 32
+#define DIM_LOCAL_WORK_GROUP_Y 8
 
 void atax_kernel1_GXYW(float *A, float *x, float *tmp, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
@@ -132,7 +132,7 @@ void verify_kernel2(float *y, float *y_ref) {
 	return;
 }
 
-int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY) {
+int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY, int kID) {
 
 	float *A;
 	float *x;
@@ -160,9 +160,9 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
 
+	if (kID == 0) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -177,7 +177,8 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*calculate)();
 
 			(*dump)();
-
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
 
@@ -186,9 +187,8 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
     coalescingMax[0] = gidx / lidx;
     coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 1) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -196,15 +196,16 @@ int atax_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			globalWorkSizeC[1] = (gidy / cY) / lidy;
 
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
-			atax_kernel2_GXYW(A, tmp, y, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
+			atax_kernel2_GXYW(A, tmp_ref, y, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel2(y, y_ref);
 
 			(*calculate)();
 
 			(*dump)();
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
-
 	return 0;
 }

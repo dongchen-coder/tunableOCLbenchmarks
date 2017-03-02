@@ -5,7 +5,7 @@ using namespace std;
 
 #define NX 4096
 #define NY 4096
-#define DIM_LOCAL_WORK_GROUP_X 16
+#define DIM_LOCAL_WORK_GROUP_X 256
 #define DIM_LOCAL_WORK_GROUP_Y 1
 
 #define A_OFFSET 0
@@ -147,7 +147,7 @@ void verify_kernel2(float *s, float *s_ref) {
 	return;
 }
 
-int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY) {
+int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void (*dump)(void), int cX, int cY, int kID) {
 
 	float *A;
 	float *s;
@@ -176,9 +176,8 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 0) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -194,18 +193,19 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*calculate)();
 
 			(*dump)();
-
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
+
 
 	gidx = (int)ceil(((float)NY) / ((float)lidx)) * lidx;
 	gidy = 1;
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;		
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 1) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -220,7 +220,8 @@ int bicg_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 			(*calculate)();
 
 			(*dump)();
-		
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
 

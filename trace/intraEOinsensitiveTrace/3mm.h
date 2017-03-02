@@ -3,13 +3,13 @@
 #include <iostream>
 using namespace std;
 
-# define NI 512
-# define NJ 512
-# define NK 512
-# define NL 512
-# define NM 512
-#define DIM_LOCAL_WORK_GROUP_X 16
-#define DIM_LOCAL_WORK_GROUP_Y 1
+# define NI 1024
+# define NJ 1024
+# define NK 1024
+# define NL 1024
+# define NM 1024
+#define DIM_LOCAL_WORK_GROUP_X 32
+#define DIM_LOCAL_WORK_GROUP_Y 8
 
 void threeMMkernel1_GXYW(float *A, float *B, float *E, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 	/* iterate over work group */
@@ -242,7 +242,7 @@ bool verify(float *G, float *G_ref) {
 }
 	
 
-int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY) {
+int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), void(*calculate)(void), void(*dump)(void), int cX, int cY, int kID) {
 
 	float *A = (float *)malloc(sizeof(float) * NI * NK);
 	float *B = (float *)malloc(sizeof(float) * NK * NJ);
@@ -271,9 +271,10 @@ int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void
 	coalescingMax[0] = gidx / lidx;
 	coalescingMax[1] = gidy / lidy;
 
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-		for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-	
+
+	if (kID == 0) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
+
 			(*reset)();
 
 			int globalWorkSizeC[2];
@@ -288,18 +289,19 @@ int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void
 			(*calculate)();			
 
 			(*dump)();
-
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
+
 
 	gidx = (size_t)ceil(((float)NL) / ((float)lidx)) * lidx;
 	gidy = (size_t)ceil(((float)NJ) / ((float)lidy)) * lidy;
 	coalescingMax[0] = gidx / lidx;
     coalescingMax[1] = gidy / lidy;
 	
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-        for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+	if (kID == 1) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 
             int globalWorkSizeC[2];
@@ -314,18 +316,19 @@ int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void
 			(*calculate)();
 
 			(*dump)();
-
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
-    }
+	}
+
 
 	gidx = (size_t)ceil(((float)NL) / ((float)lidx)) * lidx;
     gidy = (size_t)ceil(((float)NI) / ((float)lidy)) * lidy;
     coalescingMax[0] = gidx / lidx;
     coalescingMax[1] = gidy / gidy;
-	
-	for (int cX = 1; cX <= coalescingMax[0]; cX = 2*cX) {
-        for (int cY = 1; cY <= coalescingMax[1]; cY = 2*cY) {
-
+		
+	if (kID == 2) {
+		if (cX <= coalescingMax[0] && cY <= coalescingMax[1]) {
 			(*reset)();
 	
             int globalWorkSizeC[2];
@@ -333,7 +336,7 @@ int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void
             globalWorkSizeC[1] = (gidy / cY) / lidy;
 
 			printf("global work size %d, %d local work size %d, %d\n", globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy);
-			threeMMkernel3_GXYW(E, F, G, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);	
+			threeMMkernel3_GXYW(E_ref, F_ref, G, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);	
 
 			verify(G, G_ref);
 			
@@ -341,6 +344,8 @@ int threeMM_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void
 
 			(*dump)();
 
+		} else {
+			cout << "No such config:" << cX << " " << cY << " " << coalescingMax[0] << " " << coalescingMax[1] << endl;
 		}
 	}
 

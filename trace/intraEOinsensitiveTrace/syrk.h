@@ -48,6 +48,40 @@ void syrk_kernel_GXYW(float alpha, float beta, float *A, float *C, int widx, int
 	return;
 }
 
+void syrk_kernel_GXY(float alpha, float beta, float *A, float *C, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
+
+    /* iterate over work group */
+    for (int wy = 0; wy < widy; wy++) {
+		//cout << wy << endl;
+        for (int wx = 0; wx < widx; wx++) {
+            /* iterate over work item*/
+            for (int ly = 0; ly < lidy; ly++) {
+                for (int lx = 0; lx < lidx; lx++) {
+
+                	for (int cy = 0; cy < cY; cy++) {
+                            for (int cx = 0; cx < cX; cx++) {
+                                int j = (wx * cX + cx) * lidx + lx;
+                                int i = (wy * cY + cy) * lidy + ly;
+                                if ((i < NJ) && (j < NJ)) {
+                                    C[i * NJ + j] *= beta;
+                                    (*access)(C_OFFSET + i * NJ + j, wy * widx + wx);
+                                    for(int k=0; k< NI; k++) {
+                                        C[i * NJ + j] += alpha * A[i * NI + k] * A[j * NI + k];
+                                        (*access)(A_OFFSET + i * NI + k, wy * widx + wx);
+                                        (*access)(A_OFFSET + j * NI + k, wy * widx + wx);
+                                        (*access)(C_OFFSET + i * NJ + j, wy * widx + wx);
+                                    }
+                                }
+                            }
+					}
+				}
+            }
+        }
+    }
+
+    return;
+}
+
 void init_data(float *alpha, float *beta, float *A, float *C) {
 
 	*alpha = 32412;
@@ -140,7 +174,7 @@ int syrk_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), 
 
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;		
 	
-			syrk_kernel_GXYW(alpha, beta, A, C, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
+			syrk_kernel_GXY(alpha, beta, A, C, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_syrk_kernel(C, C_ref);
 

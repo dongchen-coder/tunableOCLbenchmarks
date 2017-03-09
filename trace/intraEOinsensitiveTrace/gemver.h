@@ -58,6 +58,42 @@ void gemver_kernel1_GXYW(float *A, float *U1, float *V1, float *U2, float *V2, i
 	return;
 }
 
+void gemver_kernel1_GXY(float *A, float *U1, float *V1, float *U2, float *V2, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
+
+    /* iterate over work group */
+    for (int wy = 0; wy < widy; wy++) {
+        for (int wx = 0; wx < widx; wx++) {
+            /* iterate over work item*/
+            for (int ly = 0; ly < lidy; ly++) {
+                //for (int warp = 0; warp < lidx/16; warp++) {
+                //    for (int w = 0; w < 16; w++) {
+                //        int lx = warp * 16 + w;
+				for (int lx = 0; lx < lidx;lx++) {
+                        for (int y = 0; y < cY; y++) {
+                            for (int x = 0; x < cX; x++) {
+
+                                int j = (wx * cX + x) * lidx + lx;
+                                int i = (wy * cY + y) * lidy + ly;
+
+                                if ((i < nN) && (j < nN)) {
+                                    A[i * nN + j] += U1[i] * V1[j] + U2[i] * V2[j];
+                                    (*access)(U1_OFFSET + i, wy * widx + wx);
+                                    (*access)(V1_OFFSET + j, wy * widx + wx);
+                                    (*access)(U2_OFFSET + i, wy * widx + wx);
+                                    (*access)(V2_OFFSET + j, wy * widx + wx);
+                                    (*access)(A_OFFSET + i * nN + j, wy * widx + wx);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+   
+
+    return;
+}
+
 void gemver_kernel2_GXYW(float beta, float *A, float *X, float *Y, float *Z, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
 	/* iterate over work group */
@@ -279,7 +315,7 @@ int gemver_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void)
 
 			init_data(&alpha, &beta, A, u1, v1, u2, v2, w, x, y, z);
 
-			gemver_kernel1_GXYW(A, u1, v1, u2, v2, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
+			gemver_kernel1_GXY(A, u1, v1, u2, v2, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
 
 			verify_kernel1(A, A_ref);
 			(*calculate)();

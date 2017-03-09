@@ -9,10 +9,10 @@ using namespace std;
 #define DIM_LOCAL_WORK_GROUP_Y 8
 
 #define A_OFFSET 0
-#define X1_OFFSET nN * nN
-#define X2_OFFSET nN * nN + nN
-#define Y1_OFFSET nN * nN + 2 * nN
-#define Y2_OFFSET nN * nN + 3 * nN
+#define X1_OFFSET (nN * nN)
+#define X2_OFFSET (nN * nN + nN)
+#define Y1_OFFSET (nN * nN + 2 * nN)
+#define Y2_OFFSET (nN * nN + 3 * nN)
 
 void mvt_kernel1_GXYW(float *A, float *x1, float *y1, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
 
@@ -31,15 +31,94 @@ void mvt_kernel1_GXYW(float *A, float *x1, float *y1, int widx, int widy, int li
 
 							if (i < nN) {
 								//x1[i] = 0;
-								//(*access)(X1_OFFSET + i, wy * widx + wx);
+								(*access)(X1_OFFSET + i, wy * widx + wx);
 
 								for (int j = 0; j < nN; j++) {
 									x1[i] += A[i * nN + j] * y1[j];
 									(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
 									(*access)(Y1_OFFSET + j, wy * widx + wx);
-									(*access)(X1_OFFSET + i, wy * widx + wx);
-
+									//(*access)(X1_OFFSET + i, wy * widx + wx);
 								}
+								(*access)(X1_OFFSET + i, wy * widx + wx);
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return;
+}
+
+void mvt_kernel1_GXY_R(float *A, float *x1, float *y1, int widx, int widy, int lidx, int lidy, int cX, int cY, void (*access)(uint64_t addr, uint64_t wgid)) {
+
+	/* iterate over work group */
+	int batch = 16;
+	for (int wy = 0; wy < widy; wy++) {
+		for (int bth = 0; bth < widx/batch; bth++) {
+		//for (int wx = 0; wx < widx; wx++) {
+			/* iterate over work item*/
+						
+			for (int x = 0; x < cX; x++) {
+				for (int ly = 0; ly < lidy; ly++) {
+					for (int lx = 0; lx < lidx; lx++) {
+						for (int bth_in = 0; bth_in < batch; bth_in++) {
+							int wx = bth * batch + bth_in;
+							int i = (wx * cX + x) * lidx + lx;
+							if (i < nN) {
+								//(*access)(X1_OFFSET + i, wy * widx + wx);
+								(*access)(X1_OFFSET + i, 0);
+							}
+						}
+					}
+				}
+
+				for (int j = 0; j < nN; j++) {
+					for (int ly = 0; ly < lidy; ly++) {
+						for (int lx = 0; lx < lidx; lx++) {
+							for (int bth_in = 0; bth_in < batch; bth_in++) {
+                            	int wx = bth * batch + bth_in;
+								int i = (wx * cX + x) * lidx + lx;
+								if (i < nN) {
+									x1[i] += A[i * nN + j] * y1[j];
+								}
+							}
+						}
+					}
+					for (int ly = 0; ly < lidy; ly++) {
+						for (int lx = 0; lx < lidx; lx++) {
+							for (int bth_in = 0; bth_in < batch; bth_in++) {
+                            	int wx = bth * batch + bth_in;
+								int i = (wx * cX + x) * lidx + lx;
+								if (i < nN) {
+									//(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
+									(*access)(A_OFFSET + i * nN + j, 0);
+								}
+							}
+						}
+					}
+					for (int ly = 0; ly < lidy; ly++) {
+						for (int lx = 0; lx < lidx; lx++) {
+							for (int bth_in = 0; bth_in < batch; bth_in++) {
+                            	int wx = bth * batch + bth_in;
+								int i = (wx * cX + x) * lidx + lx;
+								if (i < nN) {
+									//(*access)(Y1_OFFSET + j, wy * widx + wx);
+									(*access)(Y1_OFFSET + j, 0);
+								}
+							}
+						}
+					}
+				}
+				for (int ly = 0; ly < lidy; ly++) {
+					for (int lx = 0; lx < lidx; lx++) {
+						for (int bth_in = 0; bth_in < batch; bth_in++) {
+                            int wx = bth * batch + bth_in;
+							int i = (wx * cX + x) * lidx + lx;
+							if (i < nN) {
+								//(*access)(X1_OFFSET + i, wy * widx + wx);
+								(*access)(X1_OFFSET + i, 0);
 							}
 						}
 					}
@@ -71,7 +150,7 @@ void mvt_kernel2_GXYW(float *A, float *x2, float *y2, int widx, int widy, int li
 								//(*access)(X2_OFFSET + i, wy * widx + wx);
 								for (int j = 0; j < nN; j++) {
 									x2[i] += A[j * nN + i] * y2[j];	
-									(*access)(A_OFFSET + i * nN + j, wy * widx + wx);
+									(*access)(A_OFFSET + j * nN + i, wy * widx + wx);
 									(*access)(Y2_OFFSET + j, wy * widx + wx);
 									(*access)(X2_OFFSET + i, wy * widx + wx);
 								}
@@ -186,7 +265,8 @@ int mvt_main(void (*access)(uint64_t addr, uint64_t wgid), void(*reset)(void), v
 			cout << "global work size " << globalWorkSizeC[0] << " " << globalWorkSizeC[1] << " local work size " << lidx << " " << lidy << endl;
 
 			mvt_kernel1_GXYW(A, x1, y1, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
-
+			//mvt_kernel1_GXY_R(A, x1, y1, globalWorkSizeC[0], globalWorkSizeC[1], lidx, lidy, cX, cY, access);
+	
 			verify_kernel1(x1, x1_ref);
 
 			(*calculate)();

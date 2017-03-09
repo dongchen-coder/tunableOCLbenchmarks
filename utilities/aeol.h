@@ -8,6 +8,11 @@
 #include "aeol_common.h"
 using namespace std;
 
+/* Cache line size */
+#define CLS 32
+/* DATA type size */
+#define DTS 4
+
 /* raw data */
 std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> > f;
 std::unordered_map<uint64_t, std::unordered_map<uint64_t, uint64_t> > e;
@@ -44,14 +49,6 @@ std::unordered_map<uint64_t, double> fRT;
 /* aeol E */
 std::unordered_map<uint64_t, double> eRT;
 
-/* merged RT */
-//std::map<uint64_t, double> RT;
-
-/* FP */
-//std::map<uint64_t, double> FP;
-
-/* MR */
-//std::map<uint64_t, double> MR;
 
 #define CLASSIFICATION
 
@@ -112,6 +109,8 @@ void access(uint64_t addr, uint64_t wgid) {
 
 	ref_time++;		
 	trace_len++;
+
+	addr = addr * DTS / CLS;
 
 	if (f.find(wgid) == f.end()) {
 		if (prevs.empty() == false) {
@@ -226,96 +225,6 @@ void eRT_cal(uint64_t addr, uint64_t avgL, uint64_t m) {
 	return;
 }
 
-
-void init_sol_org() {
-
-	//cout << "Start to finilize" << endl;
-	for (unordered_map<uint64_t, uint64_t>::iterator it = prevs.begin(), eit = prevs.end(); it != eit; ++it) {
-		e[N-1][it->first] = ref_time - it->second + 1;
-	}
-	L[N-1] = ref_time;
-	//cout << "End finilizing" << endl;
-
-	vector<uint64_t> order(N);
-	for (uint64_t i = 0; i < N; i++) {
-		//order.push_back(i);
-		order[i] = i;
-		//cout << order[i] << " ";
-	}
-	
-	/* generating random order */
-
-	
-	std::default_random_engine engine(std::random_device{}());
-	shuffle(order.begin(), order.end(), engine);
-
-
-	cout << "order" << endl;
-	unordered_map<uint64_t, uint64_t> eTmp;
-	for (auto oit = order.begin(), endit = order.end(); oit != endit; ++oit) {
-		uint64_t wid = *oit;
-		cout << wid << " ";
-			
-		for (auto it = eTmp.begin(), eit = eTmp.end(); it != eit; ++it) {
-			if (f[wid].find(it->first) != f[wid].end()) {
-				uint64_t tmp = it->second + f[wid][it->first] - 1;
-				if (interRT.find(tmp) != interRT.end()) {
-					interRT[tmp] += 1;
-				} else {
-					interRT[tmp] = 1;
-				}
-				eTmp[it->first] = e[wid][it->first];
-			} else {
-				eTmp[it->first] += L[wid];
-			}
-		}
-		
-		for (auto it = e[wid].begin(), eit = e[wid].end(); it != eit; ++it) {
-			eTmp[it->first] = it->second;
-		}
-	}
-	cout << endl;	
-
-	for (auto it = eTmp.begin(), eit = eTmp.end(); it != eit; ++it) {
-		if (interRT.find(it->second) != interRT.end()) {
-			interRT[it->second] += 1;
-		} else {
-			interRT[it->second] = 1;
-		}
-	}
-
-	unordered_map<uint64_t, uint64_t> fTmp;
-	for (auto oit = order.rbegin(), endit = order.rend(); oit != endit; ++oit) {
-		uint64_t wid = *oit;
-		if (fTmp.empty()) {
-			for (auto fit = f[wid].begin(), efit = f[wid].end(); fit != efit; ++fit) {
-				fTmp[fit->first] = fit->second;
-			}
-		} else {
-			for (auto it = fTmp.begin(), eit = fTmp.end(); it != eit; ++it) {
-				if (f[wid].find(it->first) != f[wid].end()) {
-					fTmp[it->first] = f[wid][it->first];
-				} else {
-					fTmp[it->first] += L[wid];
-				}
-			}
-		}
-		for (auto fit = f[wid].begin(), efit = f[wid].end(); fit != efit; ++fit) {
-			fTmp[fit->first] = fit->second;
-		}
-	}
-
-	for (auto it = fTmp.begin(), eit = fTmp.end(); it != eit; ++it) {
-		if (interRT.find(it->second) != interRT.end()) {
-			interRT[it->second] += 1;
-		} else {
-			interRT[it->second] = 1;
-		}
-	}
-
-	return;
-}
-
 void init_sol() {
 
 	//cout << "Start to finilize" << endl;
@@ -332,8 +241,8 @@ void init_sol() {
 	}
 
 	/* generating random order */
-	std::default_random_engine engine(std::random_device{}());
-	shuffle(order.begin(), order.end(), engine);
+	//std::default_random_engine engine(std::random_device{}());
+	//shuffle(order.begin(), order.end(), engine);
 	
 	/* calculating the length between all work groups */
 	unordered_map<uint64_t, unordered_map<uint64_t, uint64_t> > lenAll;
@@ -416,6 +325,8 @@ void init_sol() {
 		tmpLen += L[wid];
 	}
 
+	f.clear();
+	e.clear();
 
 	return;
 }

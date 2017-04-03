@@ -28,6 +28,12 @@ map<uint64_t, uint64_t> twb;
 
 std::string fileNameShared;
 
+double mr;
+uint64_t cache_size;
+
+#define CLS 32
+#define DS 4
+
 inline uint64_t valueToBin(uint64_t value) {
 	if (value < ((uint64_t)1 << THRESHOLD)) {
 		return value;
@@ -167,16 +173,30 @@ int RTHisto(uint64_t addr, unsigned long ref_time) {
 
 double FPtoMR(int cacheSize) {
 
+	/*
 	uint64_t n = 0;
 	uint64_t m = 0;
+	
 	for (std::map<uint64_t, uint64_t>::iterator it = rt_cnt_histo.begin(); it != rt_cnt_histo.end(); ++it){
 		n += it->second;
 		if (footprint_avg[it->first] >= cacheSize) {
 			m += it->second;
 		}	
 	}
+	return ((double) m) / n;
+	*/
+	
+	uint64_t prev_win = 0;
+	double prev_fp = 0;
+	for (std::map<uint64_t, double>::iterator it=footprint_avg.begin(); it!=footprint_avg.end(); ++it) {
+		if (it->first > cache_size) {
+			return double(it->second - prev_fp) / (it->first - prev_win);
+		}
+		prev_win = it->first;
+		prev_fp = it->second;
+	}
 
-  return ((double) m) / n;
+    return 0;
 }
 
 
@@ -258,25 +278,54 @@ int WBHisto(void) {
 }
 
 
-int Access(uint64_t addr, char wr) {
-        ref_time++;
+void RTtoMR() {
+	
+	cache_size = 49152;
+	//cache_size = 32768;
+
+	RTtoFP();
+	mr = FPtoMR(cache_size);
+
+	return;
+}
+
+void dumpMR() {
+
+	cout << "Cache size " << double (cache_size * 32) / 1024 / 1024 << " MB" << endl;
+	cout << "mr " << mr << endl;
+	return;
+}
+
+
+void access(uint64_t addr, uint64_t wid) {
+	ref_time++;
+	addr = addr * DS / CLS;
+    RTHisto(addr, ref_time);
+    return;
+}
+
+void access(uint64_t addr, char wr) {
+    
+    ref_time++;
 	if (wr == 'W') {
 		totalWrites += 1;
 		if (totalWrites == 0) {
 			cout << "overflow" << endl;
 		}
 	}
-      	//writeRTHisto(addr, ref_time, wr);
-				//RTHistoFirstAccessTimeFilter(addr, ref_time);
-        RTHisto(addr, ref_time);
-        return 0;
+    //writeRTHisto(addr, ref_time, wr);
+	//RTHistoFirstAccessTimeFilter(addr, ref_time);
+    
+	addr = addr * DS / CLS;
+	RTHisto(addr, ref_time);
+	return;
 }
 
-int dumpFP() {
+void dumpFP() {
 	for (std::map<uint64_t, double>::iterator it=footprint_avg.begin(); it!=footprint_avg.end(); ++it) {
                 cout << "win " << it->first << " footprint " << it->second << endl;
-  }
-	return 0;
+    }
+	return;
 }
 
 int dump(char* fileName) {
@@ -319,7 +368,7 @@ int dump(char* fileName) {
 	return 0;
 }
 
-int reset() {
+void reset() {
 	
 	ref_time = 0;
 	wtmp.clear();
@@ -335,7 +384,7 @@ int reset() {
 
 	//first_access_time.clear();
 
-	return 0;
+	return;
 }
 
 

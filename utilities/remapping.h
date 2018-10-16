@@ -1,5 +1,5 @@
 
-int remappingThreadIDx(int tidx, int mode) {
+__device__ int remappingThreadIDx(int tidx, int mode) {
 	if (mode == 1) {
 		return (tidx + 32) % blockDim.x;
 	} else if (mode == 2) { 
@@ -20,7 +20,7 @@ int remappingThreadIDx(int tidx, int mode) {
 	return tidx;
 }
 
-int remappingThreadIDy(int tidy, int mode) {
+__device__ int remappingThreadIDy(int tidy, int mode) {
 	if (mode == 1) {
         return (tidy + 32) % blockDim.y;
     } else if (mode == 2) {
@@ -41,7 +41,7 @@ int remappingThreadIDy(int tidy, int mode) {
 	return tidy;
 }
 
-int remappingBlockIDx(int bidx, int mode) {
+__device__ int remappingBlockIDx(int bidx, int mode) {
 	if (mode == 1) {
 		return (bidx + 1) % gridDim.x;
 	} else if (mode == 2) {
@@ -62,7 +62,7 @@ int remappingBlockIDx(int bidx, int mode) {
 	return bidx;
 }
 
-int remappingBlockIDy(int bidy, int mode) {
+__device__ int remappingBlockIDy(int bidy, int mode) {
 	if (mode == 1) {
         return (bidy + 1) % gridDim.y;
     } else if (mode == 2) {

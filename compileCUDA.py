@@ -11,10 +11,10 @@ os.system("setenv PATH /localdisk/cuda/cuda-8.0/bin:$PATH")
 
 os.system("rm " + cudaResultDir + "/*")
 
-for t_x_mapping in range(9):
-	for t_y_mapping in range(9):
-		for b_x_mapping in range(9):
-			for b_y_mapping in range(9):
+for t_x_mapping in [0, 2, 5, 6]: #range(9):
+	for t_y_mapping in [0, 2, 5, 6]: #range(9):
+		for b_x_mapping in [0, 2, 5, 6]: #range(9):
+			for b_y_mapping in [0, 2, 5, 6]: #range(9):
 
 				t_x_mode = "#define THREADXMODE " + str(t_x_mapping) 
 				os.system("echo \'" + t_x_mode + "\' > " + remappingModeDir +"/remapping_mode.h")
